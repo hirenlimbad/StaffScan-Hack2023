@@ -1,0 +1,64 @@
+<!-- {% extends "navbar.html" %}
+{% block title %}Home{% endblock title %}
+{% block body %} -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Leave Requests</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <p> {{ message }} </p>
+    <div class="container">
+        <h1 class="mt-5 mb-4">Admin Leave Requests</h1>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee_id, request in leave_requests.items %}
+                    <tr>
+                        <td>{{ employee_id }}</td>
+                        <td>{{ request.start_date }}</td>
+                        <td>{{ request.end_date }}</td>
+                        <td>{{ request.description }}</td>
+                        <td>
+                            <form method="post" action="{% url 'approve_leave' employee_id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="start_date" value="{{ request.start_date }}">
+                                <input type="hidden" name="end_date" value="{{ request.end_date }}">
+                                <input type="hidden" name="description" value="{{ request.description }}">
+                                {% if request.status == 'approved' %}
+                                    <p>Leave Approved</p>
+                                {% elif request.status == 'declined' %}
+                                    <p>Leave Declined</p>
+                                {% else %}
+                                    <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                                    <button type="submit" name="decline" class="btn btn-danger">Decline</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    
+</body>
+</html>
+<!-- {% endblock body %} -->

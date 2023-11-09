@@ -1,0 +1,76 @@
+{% extends "user_panel_template/navbar.html" %}
+{% block title %}Home{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave Request</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5 mb-4">Leave Request Form</h1>
+        <p>Remaining Leave: {{ remaining_leave }}</p>
+        <form method="post" action="{% url 'leave_request' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                <div class="invalid-feedback">
+                    Please select a valid start date.
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                <div class="invalid-feedback">
+                    Please select a valid end date.
+                </div>
+            </div>
+        
+            <div class="form-group mt-3">
+                <label for="description">Reason for Leave:</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                <div class="invalid-feedback">
+                    Please provide a reason for leave.
+                </div>
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+        
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to calculate total days -->
+    <script>
+        const start_date = document.getElementById('start_date');
+        const end_date = document.getElementById('end_date');
+        const total_days = document.getElementById('total_days');
+
+        start_date.addEventListener('input', updateTotalDays);
+        end_date.addEventListener('input', updateTotalDays);
+
+        function updateTotalDays() {
+            const startDate = new Date(start_date.value);
+            const endDate = new Date(end_date.value);
+
+            if (startDate && endDate && startDate <= endDate) {
+                const timeDiff = Math.abs(endDate - startDate);
+                const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                total_days.value = dayDiff;
+            } else {
+                total_days.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock body %}

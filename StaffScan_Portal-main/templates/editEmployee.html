@@ -1,0 +1,51 @@
+{% extends "navbar.html" %}
+{% block title %}editEmployee{% endblock title %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+</head>
+<body>
+    <br><br><br>
+    <div class="container mt-5">
+        <h1 style="font-weight: bolder;">Edit Employee Details</h1>
+        <form method="post" enctype="multipart/form-data" action="updatedEmployee">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Enter ID:</label>
+                        {{ form.id }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Enter Name:</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Mobile Number:</label>
+                        {{ form.mobile_number }}
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Email:</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload Employee Photo 1:</label>
+                        {{ form.photo }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img src="https://buddypunch.com/wp-content/uploads/2023/08/Group-33758.png.webp" alt="Image Description" style="height: 300px;width:500px;" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock body %}
