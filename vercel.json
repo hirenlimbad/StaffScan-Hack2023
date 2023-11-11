@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "vercel-build.sh",
-      "use": "@vercel/build-utils/install"
-    },
-    {
       "src": "Application/wsgi.py",
       "use": "@vercel/python",
       "config": {
