@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Employee</title>
+</head>
+<body>
+    <h1>Delete Employee</h1>
+    <form action="#" method="post">
+        {% csrf_token %}
+        <label for="employee-id">Employee ID:</label>
+        <input type="text" id="employee-id" name="employee_id">
+        <button type="submit" name="delete">Delete</button>
+    </form>
+    <div id="employee-details">
+        <!-- Employee details will be displayed here -->
+    </div>
+</body>
+</html>

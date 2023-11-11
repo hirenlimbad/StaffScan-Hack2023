@@ -1,0 +1,17 @@
+{% for employee in employees %}
+<tr>
+    <td>{{ employee.EmployeeID }}</td>
+    <td>{{ employee.Name }}</td>
+    <td>{{ employee.MobileNumber }}</td>
+    <td>{{ employee.EmailID }}</td>
+    <td>
+       {% if employee.EmployeeID in isPresent %}
+        <p class="text-success"> Present </p>
+        {% else %}
+        <p class="text-danger"> ----- </p>
+       {% endif %}
+    </td>
+    <td><a href="{% url 'assign_task' employee.EmployeeID employee.Name %}" >Assign Task</a></td>
+    <td><a href="{% url 'view_employee' employee.EmployeeID %}">View Employee</a></td>
+</tr>
+{% endfor %}

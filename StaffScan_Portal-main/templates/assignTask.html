@@ -1,0 +1,42 @@
+{% extends "navbar.html" %}
+{% block title %}assign_task{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <style>
+.container1 {
+    background-color: rgba(247, 247, 247, 0.6); /* Use an RGBA value with alpha channel (0.7 for 70% transparency) */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    </style>
+    <!-- Add Bootstrap CSS link -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> -->
+</head>
+<body>
+    <div class="container1">
+        <form method="post">
+            <h1 style="text-align: center; font-weight: bold;">Assign task</h1> 
+            <br><br>
+            <p> <strong> Employee ID: </strong> {{ form.employee_id.value }}</p>
+            <p> <strong> Employee Name: </strong> {{ form.employee_name.value }}</p>
+            <br><br>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Assign Task</button>
+        </form>
+    </div>
+<br><br>
+<!-- Add Bootstrap JavaScript and jQuery links -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+{% endblock body %}
