@@ -4,3 +4,4 @@ mysql-connector-python==8.0.28
 Pillow==8.2.0
 mysqlclient==2.0.3
 firebase-admin==5.0.1
+mysqlclient==2.0.3 --global-option=build_ext --global-option=-I/usr/include/mysql
