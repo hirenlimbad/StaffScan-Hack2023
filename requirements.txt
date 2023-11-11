@@ -4,4 +4,4 @@ mysql-connector-python==8.0.28
 Pillow==8.2.0
 mysqlclient==2.0.3
 firebase-admin==5.0.1
-https://files.pythonhosted.org/packages/6e/c4/b0d0703ebe6a65f02b25aa83764a05f6e5397de3202ba40c2fae5ebe7175/mysql_connector_python-8.0.28-cp39-cp39-manylinux1_x86_64.whl
+mysql-connector-python==8.0.23
