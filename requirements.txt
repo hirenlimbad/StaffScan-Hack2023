@@ -2,3 +2,5 @@ Django==3.2.10
 numpy==1.21.2
 mysql-connector-python==8.0.28
 Pillow==8.2.0
+mysqlclient==2.0.3
+firebase-admin==5.0.1
