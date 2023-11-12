@@ -198,7 +198,7 @@ class AttendanceMechanism:
 # AttendanceMechanism().
 
 
-attendance_system = AttendanceMechanism()
-attendance_system.generate_data('face_embeddings.sscan')
-attendance_system.set_release_flag(True)
-attendance_system.release_camera_if_requested()
+# attendance_system = AttendanceMechanism()
+# attendance_system.generate_data('face_embeddings.sscan')
+# attendance_system.set_release_flag(True)
+# attendance_system.release_camera_if_requested()

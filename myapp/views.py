@@ -21,7 +21,7 @@ from firebase_admin import credentials, db
 import json
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
-from .AttendanceMechanism import AttendanceMechanism
+# from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
 # firebase_admin.initialize_app(cred, {
