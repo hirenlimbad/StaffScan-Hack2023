@@ -201,10 +201,11 @@ class employeeManagement:
 
 
     def __del__(self):
+        pass
         """
         Closes the database connection when the employeeManagement instance is destroyed.
         """
-        self.conn.close()
+        # self.conn.close()
 
 
 if __name__ == "__main__":
