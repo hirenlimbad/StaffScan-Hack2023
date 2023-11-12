@@ -28,11 +28,11 @@ from datetime import datetime
 #     'databaseURL': 'https://hackathon2023-4c407-default-rtdb.firebaseio.com'
 # })
 
-conn = mysql.connector.connect(
-        host="localhost", # databases.000webhost.com
-        user="unknown",
-        password="password",
-        database="hackathon")
+# conn = mysql.connector.connect(
+#         host="localhost", # databases.000webhost.com
+#         user="unknown",
+#         password="password",
+#         database="hackathon")
 
 # Create your views here.
 def index(request):
