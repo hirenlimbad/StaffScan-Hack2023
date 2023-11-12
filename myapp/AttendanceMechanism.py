@@ -16,13 +16,13 @@
 
 
 
-file = open('face_embeddings.sscan', 'rb')
-employee_embeddings = pickle.load(file)
-file.close()
+# file = open('face_embeddings.sscan', 'rb')
+# employee_embeddings = pickle.load(file)
+# file.close()
 
-encodeListKnown = [emb for (_, _, emb) in employee_embeddings]
-employee_ids = [emp_id for (emp_id, _, _) in employee_embeddings]
-employee_names = [name for (_, name, _) in employee_embeddings]
+# encodeListKnown = [emb for (_, _, emb) in employee_embeddings]
+# employee_ids = [emp_id for (emp_id, _, _) in employee_embeddings]
+# employee_names = [name for (_, name, _) in employee_embeddings]
 
 
 
