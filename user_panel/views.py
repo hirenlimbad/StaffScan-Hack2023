@@ -6,7 +6,6 @@ from django.db import connection
 import mysql.connector
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-import cv2
 from django.template import loader
 from django.middleware.csrf import get_token
 from django.http import HttpResponseRedirect

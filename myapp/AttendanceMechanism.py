@@ -1,18 +1,18 @@
-import cv2
-from django.http import StreamingHttpResponse, HttpResponse
-import face_recognition
-import numpy as np
-import pickle
-import mysql.connector
-from datetime import datetime
-from django.views.decorators.http import require_POST
-import cv2
-import face_recognition
-import mysql.connector
-import numpy as np
-import pickle
-from datetime import datetime
-from django.http import StreamingHttpResponse
+# import cv2
+# from django.http import StreamingHttpResponse, HttpResponse
+# import face_recognition
+# import numpy as np
+# import pickle
+# import mysql.connector
+# from datetime import datetime
+# from django.views.decorators.http import require_POST
+# import cv2
+# import face_recognition
+# import mysql.connector
+# import numpy as np
+# import pickle
+# from datetime import datetime
+# from django.http import StreamingHttpResponse
 
 
 
