@@ -46,6 +46,7 @@ class AttendanceMechanism:
         """
         Initializes a new instance of the AttendanceMechanism class.
         """
+        return
         self.conn = mysql.connector.connect(
             host="localhost",
             user="unknown",
