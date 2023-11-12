@@ -15,5 +15,14 @@
       "src": "/(.*)",
       "dest": "Application/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "MYSQL_CONFIG": "path/to/your/mysql_config" 
+  },
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9",
+      "includeFiles": "Application/**/*"
+    }
+  }
 }
