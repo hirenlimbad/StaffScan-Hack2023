@@ -192,7 +192,7 @@ class AttendanceMechanism:
         Releases the camera object when the instance of the AttendanceMechanism class is destroyed.
         """
         
-        self.camera.release()
+        # self.camera.release()
 
 
 # AttendanceMechanism().
