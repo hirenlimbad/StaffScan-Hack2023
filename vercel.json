@@ -3,17 +3,7 @@
     {
       "src": "Application/wsgi.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" },
-      "build": {
-        "env": {
-          "PYTHONPATH": "$PYTHONPATH:/vercel/path0"
-        },
-        "commands": [
-          "sudo apt-get update",
-          "sudo apt-get install -y libmysqlclient-dev",
-          "pip3.9 install --disable-pip-version-check --target . --upgrade -r /vercel/path0/requirements.txt"
-        ]
-      }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }
   ],
   "routes": [
@@ -21,5 +11,17 @@
       "src": "/(.*)",
       "dest": "Application/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "PYTHONPATH": "$PYTHONPATH:/vercel/path0"
+  },
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "install": {
+    "include": ["Application/requirements.txt"],
+    "dest": "/vercel/path0"
+  }
 }
