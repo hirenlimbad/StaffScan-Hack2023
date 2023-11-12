@@ -17,11 +17,7 @@
   },
   "functions": {
     "api/**/*.py": {
-      "runtime": "python3.9",
-      "install": {
-        "include": ["requirements.txt"],
-        "dest": "/vercel/path0"
-      }
+      "runtime": "python3.9"
     }
   }
 }
