@@ -19,6 +19,7 @@ class employeeManagement:
         """
         Initializes a new instance of the employeeManagement class.
         """
+        return
         self.conn = mysql.connector.connect(
             host="localhost",
             user="unknown",
