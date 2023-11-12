@@ -84,8 +84,6 @@ class AttendanceMechanism:
                 if len(encode) > 0:
                     embeddings.append((emp_id, name, encode[0]))
 
-        cursor.close()
-        self.conn.close()
 
         # Save the embeddings to a pickle file
         self.save_embeddings_to_pickle(embeddings, pickle_file)

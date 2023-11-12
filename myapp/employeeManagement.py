@@ -74,8 +74,8 @@ class employeeManagement:
             self.conn.commit()
 
             # Close the cursor and connection
-            cursor.close()
-            self.conn.close()
+            # cursor.close()
+            # self.conn.close()
 
             print("Employee data saved successfully.")
 
@@ -97,7 +97,7 @@ class employeeManagement:
         cursor.execute(sql_query)
         employees = cursor.fetchall()
 
-        cursor.close()
+        # cursor.close()
         return employees
 
     def isPresent(self):
