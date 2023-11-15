@@ -85,14 +85,21 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'hackathon',
+#         'USER': 'unknown',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',  # Change this if your MySQL server is on a different host
+#         'PORT': '3306',  # Change this to the MySQL port if it's not the default
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hackathon',
-        'USER': 'unknown',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',  # Change this if your MySQL server is on a different host
-        'PORT': '3306',  # Change this to the MySQL port if it's not the default
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -147,4 +154,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+
+STATIC_URL = '/static/'
+
+# Use 'static' instead of 'staticfiles_build/static' for Vercel deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
