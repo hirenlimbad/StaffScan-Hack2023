@@ -14,10 +14,5 @@
   ],
   "env": {
     "PYTHONPATH": "$PYTHONPATH:/vercel/path0"
-  },
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python3.9"
-    }
   }
 }
