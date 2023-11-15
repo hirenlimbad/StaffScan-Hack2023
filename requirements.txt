@@ -1,5 +1,5 @@
-Django==3.2.11
 mysql-connector-python==8.0.30
+Django==3.2.11
 Pillow==9.0.1
 firebase-admin==6.2.0
 numpy>=1.21.2
