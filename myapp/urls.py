@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 from . import AttendanceMechanism
 from . import employeeManagement
 from user_panel import views as user_view
- 
+
 urlpatterns = [
     path('', views.login_view, name='login-page'),
     path('index.html', views.index, name='index'),
@@ -34,8 +34,9 @@ urlpatterns = [
 
 
 
+
     # admin dashboard.
-    path('employee_login', user_view.admin_login, name="employee_login"), 
+    path('employee_login', user_view.admin_login, name="employee_login"),
     path('employee_dashboard', user_view.employee_dashboard, name="employee_dashboard"),
     path('punch/', user_view.punch, name='punch'),
     path('edit_employee/', user_view.edit_employee_data, name='edit_employee_data'),

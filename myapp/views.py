@@ -21,18 +21,15 @@ from firebase_admin import credentials, db
 import json
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
+from django.db import connection as conn
+
+
 # from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
 # firebase_admin.initialize_app(cred, {
 #     'databaseURL': 'https://hackathon2023-4c407-default-rtdb.firebaseio.com'
 # })
-
-# conn = mysql.connector.connect(
-#         host="localhost", # databases.000webhost.com
-#         user="unknown",
-#         password="password",
-#         database="hackathon")
 
 # Create your views here.
 def index(request):
@@ -47,9 +44,9 @@ def login_view(request):
             request.session['admin_id'] = user
             employees = employeeManagement().showAllEmployees(user)
             isPresent = employeeManagement().isPresent()
-            return render(request, 'showEmployee.html', {'employees': employees, 
+            return render(request, 'showEmployee.html', {'employees': employees,
                                                          'isPresent': isPresent})
-        
+
         text = {"error_message": "Sorry! incorrect user name or password."}
         return render(request, 'LoginPage.html', text)
     else:
@@ -61,7 +58,7 @@ def add_employee(request):
         admin_id = request.session['admin_id']
     except:
         return redirect('login-page')
-    
+
     if request.method == 'POST':
         form = EmployeeForm(request.POST, request.FILES)
         if form.is_valid():
@@ -70,9 +67,9 @@ def add_employee(request):
             admin_id = request.session['admin_id']
             employees = employeeManagement().showAllEmployees(admin_id)
             isPresent = employeeManagement().isPresent()
-            return render(request, 'showEmployee.html', {'employees': employees, 
+            return render(request, 'showEmployee.html', {'employees': employees,
                                                          'isPresent': isPresent})
-        
+
         else:
             return HttpResponse("Form is not valid")
     else:
@@ -98,10 +95,10 @@ def get_latest_employee_data(request):
         return redirect('login-page')
     employees = employeeManagement().showAllEmployees(admin_id)
     present = employeeManagement().isPresent()
-    
+
     # Render the employee data in a template and return it as HTML
     html = render(request, 'showEmployeePartial.html', {'employees': employees, 'isPresent': present})
-    
+
     # Return the HTML response
     return JsonResponse({'html': html.content.decode('utf-8')})
 
@@ -140,7 +137,7 @@ def edit_employee(request):
         form = EmployeeUpdateForm(initial=initial_data)
 
         return render(request, 'editEmployee.html', {'form': form})
-   
+
 def delete_employee(request):
 
     try:
@@ -148,7 +145,7 @@ def delete_employee(request):
     except:
         return redirect('login-page')
     if request.method == "POST":
-        
+
         employee_id = request.POST.get("employee_id")
         if employee_id:
             try:
@@ -185,7 +182,7 @@ def delete_employee(request):
             return HttpResponse("Invalid employee ID")
     else:
         return HttpResponse("Invalid request method")
-    
+
 def update_employee(request):
     try:
         admin_id = request.session['admin_id']
@@ -199,7 +196,7 @@ def update_employee(request):
             employees = employeeManagement().showAllEmployees(admin_id)
             present = employeeManagement().isPresent()
             return render(request, 'showEmployee.html', {'employees': employeeManagement().showAllEmployees()})
-        
+
         else:
             return HttpResponse("Form is not valid")
     else:
@@ -273,7 +270,7 @@ def show_assigned_tasks(request):
         admin_id = request.session['admin_id']
     except:
         return redirect('login-page')
-    
+
     # Fetch tasks from Firebase
     tasks_ref = db.reference('tasks')
     tasks = tasks_ref.get()
@@ -408,7 +405,7 @@ def late_employee(request):
             E.Position,
             (SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE AS A WHERE A.EmployeeID = E.EmployeeID AND A.islate = 1) AS late_days,
             (SELECT MAX(LateStreak) FROM (
-                SELECT EmployeeID, islate, 
+                SELECT EmployeeID, islate,
                     IF(@prevEmp = A.EmployeeID, IF(A.islate = 1, @streak := @streak + 1, @streak := 0), @streak := 0) AS LateStreak,
                     @prevEmp := A.EmployeeID
                 FROM EMPLOYEE_ATTENDANCE AS A
@@ -428,7 +425,7 @@ def late_employee(request):
 
 # Helper function to fetch results as dictionaries
 def dictfetchall(cursor):
-    
+
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 

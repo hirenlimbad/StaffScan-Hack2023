@@ -9,6 +9,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 import csv
 from io import TextIOWrapper
+from django.db import connection as conn
+
 
 class employeeManagement:
     """
@@ -16,16 +18,7 @@ class employeeManagement:
     """
 
     def __init__(self):
-        """
-        Initializes a new instance of the employeeManagement class.
-        """
-        return
-        self.conn = mysql.connector.connect(
-            host="localhost",
-            user="unknown",
-            password="password",
-            database="hackathon"
-        )
+        self.conn = conn
 
     def checkCredentials(self, username, password):
         """
@@ -42,7 +35,7 @@ class employeeManagement:
         cursor = self.conn.cursor()
         cursor.execute(query, (username, password))
         user = cursor.fetchone()
-        return user[0] if user else False
+        return user[0] if user else None
 
     def saveEmployeeForm(self, form, admin_id):
         """
@@ -52,7 +45,7 @@ class employeeManagement:
             form (EmployeeForm): The form containing the employee data.
         """
         print("Going to save Employee data.")
-        
+
         name = form.cleaned_data.get('name')
         mobile = form.cleaned_data.get('mobile_number')
         email = form.cleaned_data.get('email')
@@ -67,7 +60,7 @@ class employeeManagement:
             cursor = self.conn.cursor()
 
             # Define the SQL INSERT statement
-            insert_query = "INSERT INTO Employee (Name, MobileNumber, EmailID, password, education, position, salary, faceImage, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)" 
+            insert_query = "INSERT INTO Employee (Name, MobileNumber, EmailID, password, education, position, salary, faceImage, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             # Execute the INSERT statement with the values
             cursor.execute(insert_query, (name, mobile, email, password, education, position, salary, photo1, admin_id))
 
@@ -83,20 +76,21 @@ class employeeManagement:
         except mysql.connector.Error as e:
             print(f"Error: {e}")
 
-    def showAllEmployees(self, admin_id=0):
+    def showAllEmployees(self, admin_id=3):
         """
         Retrieves all employee data from the database.
 
         Returns:
             list: A list of dictionaries containing employee data.
         """
-        cursor = self.conn.cursor(dictionary=True)  # Use dictionary cursor to fetch data as dictionaries
+        cursor = self.conn.cursor()  # Use dictionary cursor to fetch data as dictionaries
         print(admin_id)
         # Define your SQL query to fetch employee data
-        sql_query = "SELECT EmployeeID, Name, MobileNumber, EmailID, faceImage FROM Employee where admin_id = " + str(admin_id)
+        sql_query = "SELECT EmployeeID, Name, MobileNumber, EmailID FROM Employee where admin_id = " + str(admin_id)
 
         cursor.execute(sql_query)
         employees = cursor.fetchall()
+        print(employees)
 
         # cursor.close()
         return employees
@@ -108,13 +102,13 @@ class employeeManagement:
         Returns:
             list: A list of integers representing the IDs of present employees.
         """
-        cursor = self.conn.cursor(dictionary=True)
+        cursor = self.conn.cursor()
         sql_query = "SELECT EmployeeID FROM EMPLOYEE_ATTENDANCE WHERE DATE(Start_Time) = CURDATE() AND End_Time IS NULL"
         cursor.execute(sql_query)
         present_employees = cursor.fetchall()
         present_id = []
         for i in present_employees:
-            present_id.append(i['EmployeeID'])
+            present_id.append(i[0])
         return present_id
 
     def updateEmployeeForm(self, request):
@@ -160,9 +154,9 @@ class employeeManagement:
                 return render(request, 'showEmployee.html', {'employees': employeeManagement().showAllEmployees()})
             except mysql.connector.Error as e:
                 return HttpResponse(f"Error: {e}")
-            
+
         return render(request, 'update_employee_form.html')
-    
+
     def upload_csv(self,request):
         if request.method == 'POST' and request.FILES['csv_file']:
             csv_file = request.FILES['csv_file']
@@ -177,7 +171,7 @@ class employeeManagement:
                     csv_data = csv.reader(file)
                     next(csv_data)  # Skip the header row
 
-                    
+
                     for row in csv_data:
                         try:
                             name, mobile, email, education, position, salary = row
@@ -196,7 +190,7 @@ class employeeManagement:
 
             return HttpResponseRedirect('../showEmployee.html')
 
-        
+
 
         return render(request, 'upload_csv.html')
 

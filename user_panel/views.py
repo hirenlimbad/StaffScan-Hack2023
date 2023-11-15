@@ -24,6 +24,7 @@ from firebase_admin import credentials, db
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 import csv
+from django.db import connection as conn
 
 # Initialize Firebase credentials (you've already provided this)
 cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -39,19 +40,11 @@ def admin_login(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
 
-            conn = mysql.connector.connect(
-                host="localhost",
-                user="unknown",
-                password="password",
-                database="hackathon"
-            )
-
-
             query = "SELECT * FROM Employee WHERE EmailID = %s AND password = %s"
             cursor = conn.cursor()
             cursor.execute(query, (email, password))
             user = cursor.fetchone()
-            
+
 
             if user:
                 employee_id = user[0]
@@ -135,9 +128,9 @@ def employee_dashboard(request):
         if result:
             employee_name = result[0]
 
-    
-    cursor.execute("SELECT admin_id FROM Employee WHERE EmployeeID = %s", (employee_id,))
-    admin_id = cursor.fetchone()[0]
+
+        cursor.execute("SELECT admin_id FROM Employee WHERE EmployeeID = %s", (employee_id,))
+        admin_id = cursor.fetchone()[0]
     return render(request, 'user_panel_template/employee_dashboard.html', {
         'punch_in_count': punch_in_count,
         'punch_out_count': punch_out_count,
@@ -161,15 +154,6 @@ def edit_employee_data(request):
             position = request.POST['position']
             new_password = request.POST['new_password']  # New password field
             employee_id = request.session.get('employee_id')
-
-            # Create a MySQL connection
-            conn = mysql.connector.connect(
-                host="localhost",
-                user="unknown",
-                password="password",
-                database="hackathon"
-            )
-
 
             with conn.cursor() as cursor:
                 # Define the SQL UPDATE statement
@@ -198,11 +182,10 @@ def edit_employee_data(request):
 def get_existing_employee_data(employee_id):
     try:
         conn = mysql.connector.connect(
-                host="localhost",
-                user="unknown",
-                password="password",
-                database="hackathon"
-            )
+            host = "hiren88.mysql.pythonanywhere-services.com", # databases.000webhost.com
+            user="hiren88",
+            password="ipassword",
+            database="hiren88$hackathon")
 
         cursor = conn.cursor(dictionary=True)
 

@@ -63,12 +63,12 @@
 
     {% csrf_token %}
     <div class="container">
-        
+
         <h1 style="font-weight: bolder;"">Employee List</h1>
         <form action="deleteEmployee.html" method="post">
             {% csrf_token %}
             {{ error_message }}
-            
+
             <label for="employee-id">Employee ID:</label>
             <div class="input-group mb-3 mt-3">
                 <input type="text" id="employee-id" name="employee_id" class="form-control" style="border-radius: 10px;" placeholder="Employee ID">
@@ -77,7 +77,7 @@
                 <a href="addEmployee.html" class="btn btn-success"> + Add Employee</a>
             </div>
         </form>
-    
+
 
         <form action="editEmployee.html" method="post">
             {% csrf_token %}
@@ -102,24 +102,26 @@
                     <th>Is present?</th>
                     <th>Assingn Task</th>
                     <th>View Employee</th>
+
                 </tr>
             </thead>
             <tbody>
                 {% for employee in employees %}
                 <tr>
-                    <td>{{ employee.EmployeeID }}</td>
-                    <td>{{ employee.Name }}</td>
-                    <td>{{ employee.MobileNumber }}</td>
-                    <td>{{ employee.EmailID }}</td>
+                    <td>{{ employee.0 }}</td>
+                    <td>{{ employee.1 }}</td>
+                    <td>{{ employee.2 }}</td>
+                    <td>{{ employee.3 }}</td>
                     <td>
-                       {% if employee.EmployeeID in isPresent %}
+                       {% if employee.0 in isPresent %}
                         <p class="text-success"> Present </p>
                         {% else %}
                         <p class="text-danger"> ----- </p>
                        {% endif %}
                     </td>
-                    <td><a href="{% url 'assign_task' employee.EmployeeID employee.Name %}" >Assign Task</a></td>
-                    <td><a href="{% url 'view_employee' employee.EmployeeID %}">View Employee</a></td>
+                    <td><a href="{% url 'assign_task' employee.0 employee.1 %}" >Assign Task</a></td>
+                    <td><a href="{% url 'view_employee' employee.0 %}">View Employee</a></td>
+
                 </tr>
                 {% endfor %}
             </tbody>
@@ -131,7 +133,7 @@
     <script>
     function updateEmployeeList() {
     console.log('Updating employee list...');
-    
+
     $.ajax({
         url: '/get-latest-employee-data/',
         method: 'GET',
