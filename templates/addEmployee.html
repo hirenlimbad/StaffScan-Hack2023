@@ -8,17 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+
+        *{
+            color: white;
+        }
+
+    </style>
 </head>
 <body>
     <br><br><br>
 
     
     <div class="container mt-5">
-        <form method="post" action="{% url 'upload_csv' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file" name="csv_file" accept=".csv">
-            <button type="submit" class="btn-primary" >Upload</button>
-        </form>
+        
         <h1 style="font-weight: bolder;">Add Employee</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -35,25 +39,54 @@
                     <div class="form-group">
                         <label for="{{ form.email.id_for_label }}">Enter Email:</label>
                         {{ form.email }}
-<br>
-                    <div class="form-group">
-                            <label for="{{ form.photo.id_for_label }}">Upload Employee Photo 1:</label>
-                            {{ form.faceImage }}
-                        </div>
                     </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div>
-                        <img src="https://buddypunch.com/wp-content/uploads/2023/08/Group-33758.png.webp" alt="Image Description" style="height: 300px;width:500px;" />
+                    <div class="form-group">
+                        <label for="{{ form.education.id_for_label }}">Enter Education:</label>
+                        {{ form.education }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.position.id_for_label }}">Enter Position:</label>
+                        {{ form.position }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.salary.id_for_label }}">Enter Salary:</label>
+                        {{ form.salary }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.faceImage.id_for_label }}">Upload Employee Photo 1:</label>
+                        {{ form.faceImage }}
                     </div>
                 </div>
             </div>
-
+        
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-    </div>
-</body>     
+        
+        
+
+        <br><br><br>
+        <form method="post" action="{% url 'upload_csv' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="csv_file">Upload CSV File:</label>
+        <div class="upload-container">
+            <p>Make it easy to add multiple employees at once by uploading a CSV file. The file should have information in this order: name, mobile, email, education, position, salary</p>
+            
+            <p><strong>CSV Format:</strong> name, mobile, email, education, position, salary</p>
+            
+            <div style="display: flex; margin-top: 10px;">
+                    <div>
+                        <input type="file" name="csv_file" accept=".csv">
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="btn-primary">Upload</button>
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+    </body>     
+</div>
 </html>
 
 {% endblock body %}

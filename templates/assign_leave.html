@@ -25,18 +25,32 @@ body {
         }
 
         .table {
-            background-color: #fff;
             border-radius: 5px;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: #fff;
+            color: white !important;
+            overflow-y: scroll;
         }
 
         th, td {
             padding: 10px;
             text-align: center;
+            margin: 60px;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: black;
+            background-color: #2d5395b0 !important;
+
+        }
+
+        tr {
+            margin-bottom: 20px !important;
+            color: black;
+            background-color: #2d5395b0 !important;
+        }
+
+        .table-responsive {
+            border-radius: 7px;
         }
 
         .btn-danger, .btn-primary, .btn-success {
@@ -60,9 +74,9 @@ body {
 </head>
 <body>
     <p> {{ message }} </p>
-    <div class="container">
+    <div class="container table-responsive table">
         <h1 class="mt-5 mb-4">Admin Leave Requests</h1>
-        <table class="table table-bordered table-striped">
+        <table class="table">
             <thead class="thead-dark">
                 <tr>
                     <th>Employee ID</th>

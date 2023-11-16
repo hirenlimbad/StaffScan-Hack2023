@@ -1,3 +1,7 @@
+
+{% extends "navbar.html" %}
+{% block title %}addEmployee{% endblock title %}
+{% block body %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,11 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Details</title>
     <!-- Include Bootstrap CSS from a CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        *{
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="mt-5">Employee Details</h1>
+        
         <table class="table mt-4">
             <tbody>
                 <tr>
@@ -40,9 +51,24 @@
                     <th scope="row">Salary</th>
                     <td>{{ employee.7 }}</td>
                 </tr>
+
+                <tr>
+                    <th scope="row">Employee Image</th>
+                    <td>
+                        {% if employee.8 %}
+                            <img src="data:image/png;base64,{{ employee.8 }}" alt="Employee Image" style="max-width: 200px; max-height: 200px;">
+                        {% else %}
+                            No Image Available
+                        {% endif %}
+                    </td>
+                </tr>
+
                 
             </tbody>
         </table>
     </div>
 </body>
 </html>
+
+
+{% endblock body %}

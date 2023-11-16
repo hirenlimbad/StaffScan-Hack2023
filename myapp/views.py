@@ -22,7 +22,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from django.db import connection as conn
-
+import base64
 
 # from .AttendanceMechanism import AttendanceMechanism
 
@@ -203,21 +203,32 @@ def update_employee(request):
         form = EmployeeUpdateForm()
     return render(request, 'updatedEmployee.html', {'form': form})
 
+from django.shortcuts import render, HttpResponse, redirect
+import base64
+
 def view_employee(request, employee_id):
     try:
         admin_id = request.session['admin_id']
-    except:
+    except KeyError:
         return redirect('login-page')
+
     cursor = conn.cursor()
-    cursor.execute("SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary FROM Employee WHERE EmployeeID = %s", (employee_id,))
+    cursor.execute("SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s", (employee_id,))
     employee = cursor.fetchone()
-    print(employee)
 
     if employee:
+        # Convert the faceImage blob to base64 encoding for displaying in HTML
+        if employee[8]:
+            employee_image_base64 = base64.b64encode(employee[8]).decode('utf-8')
+            employee = employee[:8] + (employee_image_base64,)
+        else:
+            employee = employee[:8] + (None,)
+
         # Employee found, pass the data to the template for rendering
         return render(request, 'view_employee.html', {'employee': employee})
     else:
         return HttpResponse("Employee not found")
+
 
 # task assingments
 def assign_task(request, employee_id, employee_name):

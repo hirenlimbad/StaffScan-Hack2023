@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Login</title>
     <!-- Add Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="col-md-6 offset-md-3">
-            <center><h2>Admin Login</h2></center>
+            <!-- Add your company logo image here -->
+            <center><img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-width: 100%; max-height: 100px;"></center>
+            <center>
+                <h2>Admin Login</h2>
+            </center>
             <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
@@ -22,14 +28,13 @@
                 <p style="color: red;">{{ error_message }}</p>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
-            <p class="mt-3"> are you Employee ? login from <a href="/employee_login">here</a></p>
+            <p class="mt-3">Are you an Employee? Login from <a href="/employee_login">here</a></p>
         </div>
     </div>
-
-    
 
     <!-- Add Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

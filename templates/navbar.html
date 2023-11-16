@@ -8,6 +8,57 @@
 
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+
+    <!-- Custom CSS -->
+    <style>
+
+        *{
+            /* font-family: playfair display; */
+            font-family: josefin sans;
+        }
+
+        .navbar{
+            background-color: #20222a;
+            border-color: transparent !important;
+        }
+
+        .navbar li:hover{
+            background-color: #c8cad5;
+            color: white !important;
+        }
+        
+        .navbar li a:hover{
+            color: black !important;
+        }
+
+        body {
+        --s: 50px;
+        --c: #191b22;
+        --_s: calc(2*var(--s)) calc(2*var(--s));
+        --_g: 35.36% 35.36% at;
+        --_c: #0000 66%,#20222a 68% 70%,#0000 72%;
+        background: 
+            radial-gradient(var(--_g) 100% 25%,var(--_c)) var(--s) var(--s)/var(--_s), 
+            radial-gradient(var(--_g) 0 75%,var(--_c)) var(--s) var(--s)/var(--_s), 
+            radial-gradient(var(--_g) 100% 25%,var(--_c)) 0 0/var(--_s), 
+            radial-gradient(var(--_g) 0 75%,var(--_c)) 0 0/var(--_s), 
+            repeating-conic-gradient(var(--c) 0 25%,#0000 0 50%) 0 0/var(--_s), 
+            radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c) fixed !important;
+        background-attachment: fixed !important;
+        }
+
+        .btn{
+            background-color: #20222a;
+        }
+
+        .btn:hover{
+            background-color: #31395b;
+        }
+
+        
+    </style>
+
 </head>
 
 <body>
@@ -21,16 +72,19 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Logo</a>
+
+                    <a class="navbar-brand" href="showEmployee.html">
+                        <img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;">
+                        StaffScan
+                    </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="addEmployee.html">Add Employee</a></li>
-                        <li><a href="showEmployee.html">Employee List</a></li>
-                        <li><a href="/showTasks.html">Show assigned Tasks</a></li>
-                        <li><a href="/assign_leave">Leave Requests</a></li>
-                        <li><a href="/late_employee">Show Late Employees</a></li>
+                        <li id="addEmployee"><a href="/addEmployee.html">Add Employee</a></li>
+                        <li id="showEmployee"><a href="/showEmployee.html">Employee List</a></li>
+                        <li id="showTasks"><a href="/showTasks.html">Show assigned Tasks</a></li>
+                        <li id="assignLeave"><a href="/assign_leave">Leave Requests</a></li>
+                        <li id="lateEmployee"><a href="/late_employee">Show Late Employees</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="../">Logout</a></li>
@@ -41,6 +95,38 @@
     </div>
 
     <br><br><br><br>
+
+
+    <script>
+        // Get the current page URL
+        var currentPageUrl = window.location.href;
+        
+        // Function to set the "active" class for the corresponding page
+        function setActivePage() {
+            // Get the list items in the navbar
+            var navbarItems = document.querySelectorAll("#navbar ul.nav li");
+        
+            // Loop through the items and check if the href matches the current page URL
+            navbarItems.forEach(function(item) {
+                var itemUrl = item.querySelector("a").getAttribute("href");
+                if (currentPageUrl.endsWith(itemUrl)) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+        }
+        
+        // Call the function when the page loads
+        window.onload = setActivePage;
+        </script>
+
+
+ <!-- jQuery and custom scripts -->
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {% block body %}
     <!-- Your content goes here -->
