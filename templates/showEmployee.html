@@ -8,57 +8,10 @@
     <title>Employee Details</title>
 
     <style>
-<<<<<<< HEAD
-        body {
-            background-color: #a497eb;
-            font-family: Arial, sans-serif;
-        }
 
-        .input-group {
-            width: 30%;
-        }
-
-        .input-group input {
-            border-radius: 10px;
-            background-color: #22346e;
-            color: white;
-        }
-
-
-        .table {
-            background-color: #2d5395b0;
-            border-radius: 5px;
-            color: white !important;
-            overflow-y: scroll;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            margin: 60px;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: #fff;
-        }
-
-        tr {
-            margin-bottom: 20px !important;
-        }
-
-        .table-responsive {
-            border-radius: 7px;
-        }
-
-        form, label {
-            color: white;
-=======
-        
         #filter{
             background-color: #007bff;
             color: black;
->>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
         }
 
         .filter-container {
@@ -76,8 +29,8 @@
             padding: 8px;
             border-radius: 5px;
         }
-        
-       
+
+
     </style>
 </head>
 
@@ -118,24 +71,6 @@
             </select>
         </div>
 
-<<<<<<< HEAD
-        <!-- Employee List Table -->
-        <div class="table-responsive">
-        <table class="table table-responsive" id="employee-list">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Mobile Number</th>
-                    <th>Email</th>
-                    <th>Is present?</th>
-                    <th>Assign Task</th>
-                    <th>View Employee</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for employee in employees %}
-=======
         <div class="table-responsive">
             <table class="table table-responsive" id="employee-list">
                 <thead>
@@ -150,7 +85,6 @@
                 </thead>
                 <tbody>
                     {% for employee in employees %}
->>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
                     <tr style="margin: 5px;">
                         {% for detail in employee %}
                         {% if forloop.counter != 7 %} {# Exclude the 7th column (View Employee) #}
@@ -175,7 +109,6 @@
             </table>
         </div>
 
-    </div>
     </div>
     </div>
 

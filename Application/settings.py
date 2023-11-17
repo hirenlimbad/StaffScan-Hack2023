@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 """
 Django settings for Application project.
@@ -87,17 +86,6 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hiren88$hackathon',
-        'USER': 'hiren88',
-        'PASSWORD': 'ipassword',
-        'HOST': 'hiren88.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
-    }
-}
 
 
 AUTH_USER_MODEL = 'user_panel.CustomUser'
@@ -303,7 +291,6 @@ USE_TZ = True
 # # Use 'static' instead of 'staticfiles_build/static' for Vercel deployment
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-=======
 
 """
 Django settings for Application project.
@@ -333,7 +320,7 @@ SECRET_KEY = 'django-insecure-4#o@6_p&kmtwe6@nmaf2!9xl0pq7swg-&48i2)u#rkz@3z%74(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -393,28 +380,17 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'hiren88$hackathon',
-#         'USER': 'hiren88',
-#         'PASSWORD': 'ipassword',
-#         'HOST': 'hiren88.mysql.pythonanywhere-services.com',
-#         'PORT': '3306',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hackathon',   # Your database name
-        'USER': 'unknown',     # Your database username
-        'PASSWORD': 'password', # Your database password
-        'HOST': 'localhost',   # Your database host
-        'PORT': '3306',         # Your database port (leave empty for default)
+        'NAME': 'hiren88$hackathon',
+        'USER': 'hiren88',
+        'PASSWORD': 'ipassword',
+        'HOST': 'hiren88.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
+
 AUTH_USER_MODEL = 'user_panel.CustomUser'
 
 
@@ -521,13 +497,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+
 ]
 
 ROOT_URLCONF = 'Application.urls'
@@ -553,17 +529,6 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hackathon',
-        'USER': 'unknown',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',  # Change this if your MySQL server is on a different host
-        'PORT': '3306',  # Change this to the MySQL port if it's not the default
-    }
-}
 
 # DATABASES = {
 #     'default': {
@@ -630,4 +595,3 @@ USE_TZ = True
 # # Use 'static' instead of 'staticfiles_build/static' for Vercel deployment
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
->>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
