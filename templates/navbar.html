@@ -8,7 +8,7 @@
 
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
+
 
     <!-- Custom CSS -->
     <style>
@@ -27,7 +27,7 @@
             background-color: #c8cad5;
             color: white !important;
         }
-        
+
         .navbar li a:hover{
             color: black !important;
         }
@@ -38,12 +38,12 @@
         --_s: calc(2*var(--s)) calc(2*var(--s));
         --_g: 35.36% 35.36% at;
         --_c: #0000 66%,#20222a 68% 70%,#0000 72%;
-        background: 
-            radial-gradient(var(--_g) 100% 25%,var(--_c)) var(--s) var(--s)/var(--_s), 
-            radial-gradient(var(--_g) 0 75%,var(--_c)) var(--s) var(--s)/var(--_s), 
-            radial-gradient(var(--_g) 100% 25%,var(--_c)) 0 0/var(--_s), 
-            radial-gradient(var(--_g) 0 75%,var(--_c)) 0 0/var(--_s), 
-            repeating-conic-gradient(var(--c) 0 25%,#0000 0 50%) 0 0/var(--_s), 
+        background:
+            radial-gradient(var(--_g) 100% 25%,var(--_c)) var(--s) var(--s)/var(--_s),
+            radial-gradient(var(--_g) 0 75%,var(--_c)) var(--s) var(--s)/var(--_s),
+            radial-gradient(var(--_g) 100% 25%,var(--_c)) 0 0/var(--_s),
+            radial-gradient(var(--_g) 0 75%,var(--_c)) 0 0/var(--_s),
+            repeating-conic-gradient(var(--c) 0 25%,#0000 0 50%) 0 0/var(--_s),
             radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c) fixed !important;
         background-attachment: fixed !important;
         }
@@ -56,7 +56,7 @@
             background-color: #31395b;
         }
 
-        
+
     </style>
 
 </head>
@@ -74,7 +74,7 @@
                     </button>
 
                     <a class="navbar-brand" href="showEmployee.html">
-                        <img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;">
+                        <!--<img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;">-->
                         StaffScan
                     </a>
                 </div>
@@ -100,12 +100,12 @@
     <script>
         // Get the current page URL
         var currentPageUrl = window.location.href;
-        
+
         // Function to set the "active" class for the corresponding page
         function setActivePage() {
             // Get the list items in the navbar
             var navbarItems = document.querySelectorAll("#navbar ul.nav li");
-        
+
             // Loop through the items and check if the href matches the current page URL
             navbarItems.forEach(function(item) {
                 var itemUrl = item.querySelector("a").getAttribute("href");
@@ -116,7 +116,7 @@
                 }
             });
         }
-        
+
         // Call the function when the page loads
         window.onload = setActivePage;
         </script>
