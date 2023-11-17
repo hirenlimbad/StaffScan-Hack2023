@@ -84,9 +84,8 @@ class employeeManagement:
             list: A list of dictionaries containing employee data.
         """
         cursor = self.conn.cursor()  # Use dictionary cursor to fetch data as dictionaries
-        print(admin_id)
         # Define your SQL query to fetch employee data
-        sql_query = "SELECT EmployeeID, Name, MobileNumber, EmailID FROM Employee where admin_id = " + str(admin_id)
+        sql_query = "SELECT EmployeeID, Name, position, EmailID FROM Employee where admin_id = " + str(admin_id)
 
         cursor.execute(sql_query)
         employees = cursor.fetchall()
@@ -112,30 +111,25 @@ class employeeManagement:
         return present_id
 
     def updateEmployeeForm(self, request):
-        """
-        Updates employee data in the database based on a Django form.
-
-        Args:
-            request (django.http.request.HttpRequest): The HTTP request containing the form data.
-
-        Returns:
-            django.shortcuts.render: A rendered HTML template showing all employees in the database.
-        """
         if request.method == 'POST':
             try:
                 # Get the data from the form
                 name = request.POST['name']
                 mobile = request.POST['mobile_number']
                 email = request.POST['email']
+                password = request.POST['password']
                 photo = request.FILES.get('photo')
+                salary = request.POST['salary']
+                position = request.POST['position']
+                education = request.POST['education']
                 id = request.POST['id']
 
                 # Create a cursor
                 cursor = self.conn.cursor()
 
                 # Define the SQL UPDATE statement
-                update_query = "UPDATE Employee SET name = %s, MobileNumber = %s, EmailID = %s"
-                values = (name, mobile, email)
+                update_query = "UPDATE Employee SET name = %s, MobileNumber = %s, EmailID = %s, password = %s, salary = %s, position = %s, education = %s"
+                values = (name, mobile, email, password,salary, position, education)
 
                 if photo:
                     update_query += ", faceImage = %s"
@@ -151,11 +145,11 @@ class employeeManagement:
 
                 cursor.close()
                 print("done")
-                return render(request, 'showEmployee.html', {'employees': employeeManagement().showAllEmployees()})
+                print("admin id is",request.session.get('admin_id'))
             except mysql.connector.Error as e:
                 return HttpResponse(f"Error: {e}")
 
-        return render(request, 'update_employee_form.html')
+        return HttpResponseRedirect('showEmployee.html', {'admin_id': request.session.get('admin_id')})
 
     def upload_csv(self,request):
         if request.method == 'POST' and request.FILES['csv_file']:

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,31 +9,38 @@
 
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<<<<<<< HEAD
 
+=======
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
 
-    <!-- Custom CSS -->
     <style>
-
-        *{
-            /* font-family: playfair display; */
+        * {
             font-family: josefin sans;
+            font-size: 16px;
         }
 
-        .navbar{
+        .navbar {
             background-color: #20222a;
             border-color: transparent !important;
         }
 
-        .navbar li:hover{
+        .navbar li:hover {
             background-color: #c8cad5;
             color: white !important;
         }
 
+<<<<<<< HEAD
         .navbar li a:hover{
+=======
+        .navbar li a:hover {
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
             color: black !important;
         }
 
         body {
+<<<<<<< HEAD
         --s: 50px;
         --c: #191b22;
         --_s: calc(2*var(--s)) calc(2*var(--s));
@@ -49,16 +57,83 @@
         }
 
         .btn{
+=======
+            --s: 50px;
+            --c: #191b22;
+            --_s: calc(2*var(--s)) calc(2*var(--s));
+            --_g: 35.36% 35.36% at;
+            --_c: #0000 66%, #20222a 68% 70%, #0000 72%;
+            background:
+                radial-gradient(var(--_g) 100% 25%, var(--_c)) var(--s) var(--s)/var(--_s),
+                radial-gradient(var(--_g) 0 75%, var(--_c)) var(--s) var(--s)/var(--_s),
+                radial-gradient(var(--_g) 100% 25%, var(--_c)) 0 0/var(--_s),
+                radial-gradient(var(--_g) 0 75%, var(--_c)) 0 0/var(--_s),
+                repeating-conic-gradient(var(--c) 0 25%, #0000 0 50%) 0 0/var(--_s),
+                radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c) fixed !important;
+            background-attachment: fixed !important;
+            color: white;
+
+        }
+
+        .btn {
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
             background-color: #20222a;
         }
 
-        .btn:hover{
+        .btn:hover {
             background-color: #31395b;
         }
 
+<<<<<<< HEAD
 
     </style>
+=======
+        .table {
+            border-radius: 5px;
+            color: white !important;
+            overflow-y: scroll;
+        }
 
+        th, td {
+            padding: 10px;
+            text-align: right;
+            margin: 60px;
+            overflow: auto;
+            max-height: 100px;
+        }
+
+
+
+        th {
+            background-color: #007BFF !important;
+            color: black;
+        }
+
+        tr {
+            margin-bottom: 20px !important;
+            color: black;
+            background-color: #2d5395b0 !important;
+        }
+
+        .table-responsive {
+            border-radius: 7px;
+        }
+
+        table{
+            margin-top: 10px;
+            max-width: 900px !important;
+        }
+
+        a{
+            color: black;
+        }
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
+
+        a:hover{
+            color: #191b22;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -74,7 +149,11 @@
                     </button>
 
                     <a class="navbar-brand" href="showEmployee.html">
+<<<<<<< HEAD
                         <!--<img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;">-->
+=======
+                        <!-- <img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;"> -->
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
                         StaffScan
                     </a>
                 </div>
@@ -107,7 +186,7 @@
             var navbarItems = document.querySelectorAll("#navbar ul.nav li");
 
             // Loop through the items and check if the href matches the current page URL
-            navbarItems.forEach(function(item) {
+            navbarItems.forEach(function (item) {
                 var itemUrl = item.querySelector("a").getAttribute("href");
                 if (currentPageUrl.endsWith(itemUrl)) {
                     item.classList.add("active");
@@ -119,14 +198,14 @@
 
         // Call the function when the page loads
         window.onload = setActivePage;
-        </script>
+    </script>
 
 
- <!-- jQuery and custom scripts -->
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- jQuery and custom scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {% block body %}
     <!-- Your content goes here -->
@@ -139,4 +218,5 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     {% endblock body %}
 </body>
+
 </html>

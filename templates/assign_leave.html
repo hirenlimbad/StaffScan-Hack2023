@@ -5,79 +5,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Leave Requests</title>
+    <title> Leave Requests </title>
     <!-- Include Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 
     <style>
-
-body {
-            background-color: #a497eb;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .input-group {
-            width: 500px;
-        }
-
-        .table {
-            border-radius: 5px;
-            color: white !important;
-            overflow-y: scroll;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            margin: 60px;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: black;
-            background-color: #2d5395b0 !important;
-
-        }
-
-        tr {
-            margin-bottom: 20px !important;
-            color: black;
-            background-color: #2d5395b0 !important;
-        }
-
-        .table-responsive {
-            border-radius: 7px;
-        }
-
-        .btn-danger, .btn-primary, .btn-success {
-            margin-top: 10px;
-            margin-right: 10px;
-        }
-
-        p {
-            font-weight: bold;
-        }
-
-        p.text-success {
-            color: green;
-        }
-
-        p.text-danger {
-            color: red;
-        }
-
     </style>
 </head>
 <body>
-    <p> {{ message }} </p>
-    <div class="container table-responsive table">
-        <h1 class="mt-5 mb-4">Admin Leave Requests</h1>
-        <table class="table">
-            <thead class="thead-dark">
+    <!-- <p> {{ message }} </p> -->
+
+    <div class="container">
+    <h1 class="mt-5 mb-4">Leave Requests</h1>
+    <div class="table">
+        <table class="table table-responsive">
+            <thead>
                 <tr>
                     <th>Employee ID</th>
                     <th>Start Date</th>
@@ -114,7 +56,8 @@ body {
             </tbody>
         </table>
     </div>
-    
+</div>
+</div>
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

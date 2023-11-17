@@ -8,12 +8,14 @@
 </head>
 
 <body>
-    <div class="container mt-5">
+
+
+    <div class="container">
         <div class="col-md-6 offset-md-3">
             <!-- Add your company logo image here -->
             <center><img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-width: 100%; max-height: 100px;"></center>
             <center>
-                <h2>Admin Login</h2>
+                <h2>Company Login</h2>
             </center>
             <form method="post">
                 {% csrf_token %}
@@ -28,7 +30,7 @@
                 <p style="color: red;">{{ error_message }}</p>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
-            <p class="mt-3">Are you an Employee? Login from <a href="/employee_login">here</a></p>
+            <p class="mt-3">Are you an Employee? Login from <a href="employee_login">here</a></p>
         </div>
     </div>
 

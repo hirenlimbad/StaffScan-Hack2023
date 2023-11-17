@@ -1,18 +1,14 @@
 {% extends "navbar.html" %}
 {% block title %}Home{% endblock title %}
 {% block body %}
-
 <head>
     <!-- Meta tags and title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Details</title>
 
-    <!-- Include Bootstrap CSS from a CDN -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-
-    <!-- Internal Styles -->
     <style>
+<<<<<<< HEAD
         body {
             background-color: #a497eb;
             font-family: Arial, sans-serif;
@@ -57,47 +53,37 @@
 
         form, label {
             color: white;
+=======
+        
+        #filter{
+            background-color: #007bff;
+            color: black;
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
         }
 
         .filter-container {
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
-        select {
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #22346e;
-            color: white;
-            cursor: pointer;
-        }
-
-        .btn-danger, .btn-primary {
-            margin-top: 10px;
+        .filter-container label {
             margin-right: 10px;
         }
 
-        p {
-            font-weight: bold;
+        .filter-container select {
+            padding: 8px;
+            border-radius: 5px;
         }
-
-        p.text-success {
-            color: green;
-        }
-
-        p.text-danger {
-            color: red;
-        }
+        
+       
     </style>
 </head>
 
 <body>
     {% csrf_token %}
     <div class="container">
-
         <form action="deleteEmployee.html" method="post" oninput="toggleSubmitButton('delete')">
             {% csrf_token %}
             {{ error_message }}
@@ -106,29 +92,17 @@
 
             <div style="display: flex;">
                 <div class="input-group">
-                    <input type="number" id="delete-employee-id" name="employee_id" class="form-control" style="border-radius: 10px;" placeholder="Delete Employee" oninput="toggleSubmitButton('delete')">
+                    <input type="number" id="delete-employee-id" name="employee_id" class="form-control"
+                        style="border-radius: 10px;" placeholder="Delete Employee"
+                        oninput="toggleSubmitButton('delete')" list="delete-employee-id-datalist">
+                    <datalist id="delete-employee-id-datalist"></datalist>
+                    <!-- <input type="number" id="delete-employee-id" name="employee_id" class="form-control" style="border-radius: 10px;" placeholder="Delete Employee" oninput="toggleSubmitButton('delete')"> -->
                 </div>
 
                 <div>
-                    <button type="submit" name="delete" class="btn btn-danger" id="delete-submit-button" style="margin: -5px 10px 10px 30px;" disabled>Delete</button>
-                </div>
-            </div>
-        </form>
 
-        <!-- For the Edit form -->
-        <form action="editEmployee.html" method="post" oninput="toggleSubmitButton('edit')">
-            {% csrf_token %}
-            {{ error_message }}
-
-            <label for="edit-employee-id">Employee ID:</label>
-
-            <div style="display: flex;">
-                <div class="input-group">
-                    <input type="number" id="edit-employee-id" name="employee_id" class="form-control" style="border-radius: 10px;" placeholder="Edit Employee" oninput="toggleSubmitButton('edit')">
-                </div>
-
-                <div>
-                    <button type="submit" name="edit" class="btn btn-primary" id="edit-submit-button" style="margin: -5px 10px 10px 30px;" disabled>Edit</button>
+                    <button type="submit" name="delete" class="btn btn-danger" id="delete-submit-button"
+                        style="margin: -5px 10px 10px 30px;" disabled>Delete</button>
                 </div>
             </div>
         </form>
@@ -144,6 +118,7 @@
             </select>
         </div>
 
+<<<<<<< HEAD
         <!-- Employee List Table -->
         <div class="table-responsive">
         <table class="table table-responsive" id="employee-list">
@@ -160,23 +135,47 @@
             </thead>
             <tbody>
                 {% for employee in employees %}
+=======
+        <div class="table-responsive">
+            <table class="table table-responsive" id="employee-list">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Email</th>
+                        <th>Is present?</th>
+                        <th>Assign Task</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+>>>>>>> e56a18795b600067d61f73ce509f9abc715c99a4
                     <tr style="margin: 5px;">
                         {% for detail in employee %}
-                            <td>{{ detail }}</td>
+                        {% if forloop.counter != 7 %} {# Exclude the 7th column (View Employee) #}
+                        {% if forloop.counter == 2 %} {# If it's the second column (Name) #}
+                        <td><a href="{% url 'view_employee' employee.0 %}">{{ detail }}</a></td>
+                        {% else %}
+                        <td>{{ detail }}</td>
+                        {% endif %}
+                        {% endif %}
                         {% endfor %}
                         <td>
                             {% if employee.0 in isPresent %}
-                                <p class="text-success"> Present </p>
+                            <p class="text-success"> Present </p>
                             {% else %}
-                                <p class="text-danger"> ----- </p>
+                            <p class="text-danger"> ----- </p>
                             {% endif %}
                         </td>
                         <td><a href="{% url 'assign_task' employee.0 employee.1 %}">Assign Task</a></td>
-                        <td><a href="{% url 'view_employee' employee.0 %}">View Employee</a></td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
     </div>
     </div>
 
@@ -229,9 +228,44 @@
                 rows[i].style.display = showRow ? '' : 'none';
             }
         }
+
+    </script>
+
+
+    <script>
+        // Function to suggest auto-completion options from the table column
+        function suggestEmployeeId(inputId, datalistId) {
+            var datalist = document.getElementById(datalistId);
+            var employeeIdInput = document.getElementById(inputId);
+            var table = document.getElementById('employee-list');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            // Clear existing options
+            datalist.innerHTML = '';
+
+            // Extract employee IDs from the table and add them as options
+            for (var i = 0; i < rows.length; i++) {
+                var employeeId = rows[i].getElementsByTagName('td')[0].textContent.trim();
+                var option = document.createElement('option');
+                option.value = employeeId;
+                datalist.appendChild(option);
+            }
+        }
+
+        // Event listener for input changes
+        document.addEventListener('input', function (event) {
+            if (event.target && event.target.id) {
+                // Check if the input field is one of the target fields
+                if (event.target.id.includes('-employee-id')) {
+                    // Call the function to suggest auto-completion options from the table column
+                    suggestEmployeeId(event.target.id, event.target.id + '-datalist');
+                }
+            }
+        });
     </script>
 
 </body>
+
 </html>
 
 {% endblock body %}
