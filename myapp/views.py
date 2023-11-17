@@ -400,13 +400,15 @@ def approve_leave(request, employee_id):
 #     print(late_employee_list)
 #     context = {'late_employee_list': late_employee_list}
 #     return render(request, 'late_employees.html', context)
+from django.shortcuts import render, redirect
+from django.db import connection
 
 def late_employee(request):
-
     try:
         admin_id = request.session['admin_id']
-    except:
+    except KeyError:
         return redirect('login-page')
+
     # Execute the SQL query
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -422,29 +424,27 @@ def late_employee(request):
                 FROM EMPLOYEE_ATTENDANCE AS A
                 WHERE A.EmployeeID = E.EmployeeID
                 ORDER BY A.Start_Time
-            ) AS streaks) AS consecutive_late
+            ) AS streaks) AS consecutive_late,
+            (SELECT MAX(Start_Time) FROM EMPLOYEE_ATTENDANCE AS A WHERE A.EmployeeID = E.EmployeeID) AS last_punch_in_time
         FROM Employee AS E
-        WHERE admin_id = %s  # Add this line to filter by admin_id
+        WHERE admin_id = %s
         HAVING late_days > 0;
         """, [admin_id])
 
-
-        # Fetch the results
         employees = dictfetchall(cursor)
 
     return render(request, 'late_employees.html', {'employees': employees})
 
 # Helper function to fetch results as dictionaries
 def dictfetchall(cursor):
+    desc = cursor.description
+    rows = cursor.fetchall()
 
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+    if rows is not None:
+        return [dict(zip([col[0] for col in desc], row)) for row in rows]
+    else:
+        return []
 
-import json
-import mysql.connector
-from django.http import JsonResponse
-
-import mysql.connector
 
 def apply_penalty(request, employee_id):
     try:
@@ -471,4 +471,43 @@ def apply_penalty(request, employee_id):
     update_query = "UPDATE Employee SET salary = %s WHERE EmployeeID = %s"
     cursor.execute(update_query, (new_salary, employee_id))
     conn.commit()
-    return redirect('late_employee')  # Corrected URL name
+    return redirect('late_employee')
+
+
+from django.db import IntegrityError
+
+def setTimings(request):
+    try:
+        admin_id = request.session['admin_id']
+    except:
+        return redirect('login-page')
+
+    if request.method == 'POST':
+        position = request.POST.get('position')
+        arrival_time = request.POST.get('arrival_time')
+
+        # Check if the entry exists
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM timings WHERE position = %s AND admin_id = %s", [position, admin_id])
+            count = cursor.fetchone()[0]
+
+        if count > 0:
+            # Update the existing entry
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE timings SET arrival_time = %s WHERE position = %s AND admin_id = %s", [arrival_time, position, admin_id])
+        else:
+            # Insert a new entry
+            with connection.cursor() as cursor:
+                try:
+                    cursor.execute("INSERT INTO timings (position, arrival_time, admin_id) VALUES (%s, %s, %s)", [position, arrival_time, admin_id])
+                except IntegrityError:
+                    # Handle integrity error (e.g., duplicate entry) if needed
+                    pass
+
+    # Retrieve timings after update/insert
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT position, arrival_time FROM timings WHERE arrival_time IS NOT NULL AND admin_id = %s", [admin_id])
+        rows = cursor.fetchall()
+        timings = {row[0]: row[1] for row in rows}
+
+    return render(request, 'setTimings.html', {'timings': timings})

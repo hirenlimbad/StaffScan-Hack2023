@@ -29,6 +29,7 @@
                     <th>Employee ID</th>
                     <th>Name</th>
                     <th>Position</th>
+                    <th>Last Punch In Time</th>
                     <th>Late Days</th>
                     <th>Consecutive Late</th>
                     <th>Penalty</th> <!-- New column for the "Penalty" button -->
@@ -40,6 +41,7 @@
                         <td>{{ employee.EmployeeID }}</td>
                         <td>{{ employee.Name }}</td>
                         <td>{{ employee.Position }}</td>
+                        <td>{{ employee.last_punch_in_time }}</td>
                         <td>{{ employee.late_days }}</td>
                         <td>{{ employee.consecutive_late }}</td>
                         <td><button class="btn btn-primary penalty-button" data-employeeid="{{ employee.EmployeeID }}">Penalty</button></td>

@@ -30,6 +30,8 @@ urlpatterns = [
     path('late_employee', views.late_employee, name='late_employee'),
     # path('apply_penalty/', views.apply_penalty, name='apply_penalty'),
     path('apply_penalty/<int:employee_id>/', views.apply_penalty, name='apply_penalty'),
+    path('set_timings.html', views.setTimings, name="SetTimings"),
+    path('set-timings/', views.setTimings, name='set_timings'),
 
 
 

@@ -1,0 +1,49 @@
+{% extends "navbar.html" %}
+{% block title %}Set Timings{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timings</title>
+
+    <style>
+
+        select, input{
+            color: black;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <h1>Employee Attendance System</h1>
+
+    <!-- Form to set arrival time for different positions -->
+    <form method="POST" action="/set-timings/">
+        {% csrf_token %}
+        <label for="position">Select Position:</label>
+        <select name="position" id="position">
+            <option value="senior_developer">Senior Developer</option>
+            <option value="junior_developer">Junior Developer</option>
+            <option value="manager">Manager</option>
+        </select>
+        <label for="arrival_time">Set Arrival Time:</label>
+        <input type="time" name="arrival_time" id="arrival_time" required>
+        <button type="submit" class="btn btn-success">Set Timings</button>
+    </form>
+
+    <!-- Display current timings for different positions -->
+    <h2>Current Timings:</h2>
+    <ul>
+        {% for position, timing in timings.items %}
+            <li>{{ position }}: {{ timing }}</li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>
+    
+{% endblock body %}

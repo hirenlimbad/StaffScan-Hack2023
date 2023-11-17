@@ -380,13 +380,24 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'hiren88$hackathon',
+#         'USER': 'hiren88',
+#         'PASSWORD': 'ipassword',
+#         'HOST': 'hiren88.mysql.pythonanywhere-services.com',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hiren88$hackathon',
-        'USER': 'hiren88',
-        'PASSWORD': 'ipassword',
-        'HOST': 'hiren88.mysql.pythonanywhere-services.com',
+        'NAME': 'hackathon',
+        'USER': 'unknown',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
