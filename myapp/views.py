@@ -111,32 +111,31 @@ def edit_employee(request):
     form1 = EmployeeUpdateForm()
 
     if request.method == 'POST':
-        # this method will return employee id, given in post method
-
-        id = request.POST.get('employee_id')
-        cursor = conn.cursor()
-        cursor.execute("select * from Employee where EmployeeID = %s", (id,))
+        employee_id = request.POST.get('employee_id')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM Employee WHERE EmployeeID = %s", (employee_id,))
         employee = cursor.fetchone()
+        print(employee)
+        if employee:
+            # Extracting data from the database query
+            id, name, mobile, email, password ,education, position, salary, face_image, *extra_values = employee
+            initial_data = {
+                'id': id,
+                'name': name,
+                'mobile_number': mobile,
+                'email': email,
+                'password': password,
+                'education': education,
+                'position': position,
+                'salary': salary
+            }
 
-        # Get the data from the database query
-        id = employee[0]
-        name = employee[1]
-        mobile = employee[2]
-        email = employee[3]
+            print("password is: ", password)
 
-        # Create a dictionary with initial data for the form
-        initial_data = {
-            'id': id,
-            'name': name,
-            'mobile_number': mobile,
-            'email': email,
-            # Add other fields as needed
-        }
+            # Create the form instance with initial data
+            form = EmployeeUpdateForm(initial=initial_data)
 
-        # Create the form instance with initial data
-        form = EmployeeUpdateForm(initial=initial_data)
-
-        return render(request, 'editEmployee.html', {'form': form})
+            return render(request, 'editEmployee.html', {'form': form})
 
 def delete_employee(request):
 
@@ -195,13 +194,14 @@ def update_employee(request):
             admin_id = request.session['admin_id']
             employees = employeeManagement().showAllEmployees(admin_id)
             present = employeeManagement().isPresent()
-            return render(request, 'showEmployee.html', {'employees': employeeManagement().showAllEmployees()})
+            return render(request, 'showEmployee.html', {'employees': employees,
+                                                         'isPresent': present})
 
         else:
             return HttpResponse("Form is not valid")
     else:
         form = EmployeeUpdateForm()
-    return render(request, 'updatedEmployee.html', {'form': form})
+    return HttpResponse("hmm lets debug it.")
 
 from django.shortcuts import render, HttpResponse, redirect
 import base64

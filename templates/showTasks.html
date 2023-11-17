@@ -6,55 +6,14 @@
 <html>
 <head>
     <title>Assigned Tasks</title>
-    <style>
-
-        .container1 {
-            color: white;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center  ;
-}
-
-.table {
-            border-radius: 5px;
-            color: white !important;
-            overflow-y: scroll;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            margin: 60px;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: black;
-            background-color: #2d5395b0 !important;
-
-        }
-
-        tr {
-            margin-bottom: 20px !important;
-            color: black;
-            background-color: #2d5395b0 !important;
-        }
-
-        .table-responsive {
-            border-radius: 7px;
-        }
-    </style>
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 </head>
 <body>
-    <div class="container1">
+    <div class="container">
         <h1 class="mt-5" style="text-align: center; font-weight: bold;">Assigned Tasks</h1>
         {% if tasks %}
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table table-responsive">
+            <table class="table table-responsive">
                 <thead class="bg-primary text-white">
                     <tr>
                         <th>Employee ID</th>
