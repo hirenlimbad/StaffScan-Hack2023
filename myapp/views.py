@@ -20,10 +20,9 @@ import firebase_admin
 from firebase_admin import credentials, db
 import json
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
+from datetime import datetime, date
 from django.db import connection as conn
 import base64
-
 # from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -229,6 +228,8 @@ def view_employee(request, employee_id):
         return HttpResponse("Employee not found")
 
 
+
+
 # task assingments
 def assign_task(request, employee_id, employee_name):
     try:
@@ -247,8 +248,9 @@ def assign_task(request, employee_id, employee_name):
 
             employee_task_id = form.cleaned_data['employee_id']
 
+            today_date = "2023-02-02"
             # Push the data to Firebase with the new reference
-            ref = db.reference('tasks/' + str(employee_task_id))
+            ref = db.reference(f'tasks/{employee_task_id}/{today_date}')
             ref.set({
                 'employee_id': employee_id,
                 'employee_name': employee_name,
@@ -256,16 +258,16 @@ def assign_task(request, employee_id, employee_name):
                 'task_description': task_description,
                 'deadline': deadline,
                 'admin_id': admin_id,
-                'status' : 'pending'
+                'status': 'pending'
             })
+
 
             messages.success(request, 'Task assigned successfully.')
             return redirect('/showTasks.html')
+        
+        return HttpResponse("Form is not valid")
     else:
-        print("Employee ID from URL:", employee_id)
-        print("Employee Name from URL:", employee_name)
-
-        # Pre-fill the form with employee details.
+        form = AssignTaskForm()
         initial_data = {
             'employee_id': employee_id,
             'employee_name': employee_name,
