@@ -4,11 +4,10 @@ from django import forms
 from django import forms
 
 POSITION_CHOICES = [
-    ('senior_manager', 'Senior Manager'),
-    ('junior_manager', 'Junior Manager'),
+    ('senior_developer', 'Senior Manager'),
+    ('junior_developer', 'Junior Manager'),
     ('manager', 'Manager'),
 ]
-
 class EmployeeForm(forms.Form):
     name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     mobile_number = forms.CharField(max_length=15, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))

@@ -486,27 +486,12 @@ def setTimings(request):
         position = request.POST.get('position')
         arrival_time = request.POST.get('arrival_time')
 
-        # Check if the entry exists
         with connection.cursor() as cursor:
-            cursor.execute("SELECT COUNT(*) FROM timings WHERE position = %s AND admin_id = %s", [position, admin_id])
-            count = cursor.fetchone()[0]
-
-        if count > 0:
-            # Update the existing entry
-            with connection.cursor() as cursor:
-                cursor.execute("UPDATE timings SET arrival_time = %s WHERE position = %s AND admin_id = %s", [arrival_time, position, admin_id])
-        else:
-            # Insert a new entry
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute("INSERT INTO timings (position, arrival_time, admin_id) VALUES (%s, %s, %s)", [position, arrival_time, admin_id])
-                except IntegrityError:
-                    # Handle integrity error (e.g., duplicate entry) if needed
-                    pass
+            cursor.execute("UPDATE Employee SET arrival_time = %s WHERE position = %s AND admin_id = %s", [arrival_time, position, admin_id])
 
     # Retrieve timings after update/insert
     with connection.cursor() as cursor:
-        cursor.execute("SELECT position, arrival_time FROM timings WHERE arrival_time IS NOT NULL AND admin_id = %s", [admin_id])
+        cursor.execute("SELECT DISTINCT position, arrival_time FROM Employee WHERE arrival_time IS NOT NULL AND admin_id = %s", [admin_id])
         rows = cursor.fetchall()
         timings = {row[0]: row[1] for row in rows}
 

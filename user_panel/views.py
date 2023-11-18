@@ -25,6 +25,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 import csv
 from django.db import connection as conn
+from datetime import timedelta, datetime, date
 
 # Initialize Firebase credentials (you've already provided this)
 cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -58,21 +59,59 @@ def admin_login(request):
     return render(request, 'user_panel_template/employee_login.html', {'form': form})
 
 
+
+def get_consecutive_on_time_days(employee_id, current_date):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s ORDER BY Start_Time DESC LIMIT 3",
+            (employee_id, current_date),
+        )
+        attendance_records = cursor.fetchall()
+
+    consecutive_on_time_days = 0
+    for record in attendance_records:
+        is_late = record[0]
+        if is_late == 0:
+            consecutive_on_time_days += 1
+        else:
+            break  # If there's a late record, the streak is broken
+
+    return consecutive_on_time_days
+
 def punch(request):
     employee_id = request.session.get('employee_id')
     current_time = timezone.now()
     current_date = date.today()
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT AttendanceID, DATE(Start_Time) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s AND End_Time IS NULL", (employee_id, current_date))
+        cursor.execute("SELECT AttendanceID, DATE(Start_Time), Start_Time FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s AND End_Time IS NULL", (employee_id, current_date))
         existing_attendance = cursor.fetchone()
 
         if request.method == 'POST':
             if 'punch_in' in request.POST:
                 if not existing_attendance:
+                    # Fetch expected arrival time from the Employee table
+                    cursor.execute("SELECT arrival_time FROM Employee WHERE EmployeeID = %s", (employee_id,))
+                    arrival_time = cursor.fetchone()[0]
+
+                    # Make expected arrival time timezone-aware
+                    expected_arrival_datetime = datetime.combine(current_date, arrival_time, tzinfo=timezone.utc)
+
+                    # Calculate if the employee is late
+                    late_threshold = timedelta(minutes=15)  # Adjust this threshold as needed
+                    is_late = current_time > (expected_arrival_datetime + late_threshold)
+
                     # Punch In
-                    cursor.execute("INSERT INTO EMPLOYEE_ATTENDANCE (EmployeeID, Start_Time) VALUES (%s, %s)", (employee_id, current_time))
+                    cursor.execute("INSERT INTO EMPLOYEE_ATTENDANCE (EmployeeID, Start_Time, islate) VALUES (%s, %s, %s)", (employee_id, current_time, int(is_late)))
                     connection.commit()
+
+                    # Check consecutive on-time days
+                    consecutive_on_time_days = get_consecutive_on_time_days(employee_id, current_date)
+                    if consecutive_on_time_days >= 3:
+                        # Increment remaining_leave by the desired amount
+                        increment_leave_days = 1  # You can adjust this based on your policy
+                        cursor.execute("UPDATE Employee SET remaining_leave = remaining_leave + %s WHERE EmployeeID = %s", (increment_leave_days, employee_id))
+                        connection.commit()
 
             elif 'punch_out' in request.POST:
                 if existing_attendance:
@@ -81,7 +120,6 @@ def punch(request):
                     connection.commit()
 
     return redirect('employee_dashboard')
-
 
 def employee_dashboard(request):
     current_date = date.today()
@@ -216,11 +254,17 @@ def leave_request(request):
         employee_id = request.session.get('employee_id')
         ref = db.reference(f'leave_requests/{employee_id}')
 
-        # Set the leave request data in the Firebase node with the employee's ID
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT admin_id FROM Employee WHERE EmployeeID = %s", (employee_id,))
+            result = cursor.fetchone()
+            if result:
+                admin_id = result[0]
+                
         ref.set({
             'start_date': start_date,
             'end_date': end_date,
-            'description': description
+            'description': description,
+            'admin_id': admin_id,
         })
 
         return redirect('employee_dashboard')
