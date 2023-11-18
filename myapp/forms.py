@@ -22,13 +22,11 @@ class AssignTaskForm(forms.Form):
     employee_id = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Employee ID'}),
-        required=False,
-        disabled=True
+        required=False
     )
     employee_name = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Employee Name'}),
-        disabled=True
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Employee Name'})
     )
     task_header = forms.CharField(
         max_length=100,

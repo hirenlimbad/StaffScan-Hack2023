@@ -292,6 +292,10 @@ def show_assigned_tasks(request):
             task_list = [task for task in tasks.values()]
             task_list = [task for task in task_list if task['admin_id'] == admin_id]
             task_list.sort(key=lambda x: datetime.strptime(x['deadline'], '%Y-%m-%d'))
+            
+            # only show tasks that admin has assigned
+            task_list = [task for task in task_list if task['admin_id'] == admin_id]
+
         except:
             task_list = tasks
             pass
