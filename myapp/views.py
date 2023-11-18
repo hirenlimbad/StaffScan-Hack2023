@@ -115,7 +115,6 @@ def edit_employee(request):
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM Employee WHERE EmployeeID = %s", (employee_id,))
         employee = cursor.fetchone()
-        print(employee)
         if employee:
             # Extracting data from the database query
             id, name, mobile, email, password ,education, position, salary, face_image, *extra_values = employee
