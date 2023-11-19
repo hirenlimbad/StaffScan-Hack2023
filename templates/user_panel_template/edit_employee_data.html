@@ -6,49 +6,48 @@
 <html>
 <head>
     <title>Edit Employee Data</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Edit Employee Data</h1>
+        <h1>Edit Your Data</h1>
 
         <form method="post" action="{% url 'edit_employee_data' %}" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ existing_employee.Name }}" required>
+                <input type="text" id="name" name="name" class="form-control" value="{{ existing_employee.0 }}" required>
                 <div class="invalid-feedback">Name is required.</div>
             </div>
 
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ existing_employee.EmailID }}" required>
+                <input type="email" id="email" name="email" class="form-control" value="{{ existing_employee.2 }}" required>
                 <div class="invalid-feedback">Valid email is required.</div>
             </div>
 
             <div class="form-group">
                 <label for="mobile_number">Mobile Number:</label>
-                <input type="text" id="mobile_number" name="mobile_number" class="form-control" value="{{ existing_employee.MobileNumber }}" required>
+                <input type="text" id="mobile_number" name="mobile_number" class="form-control" value="{{ existing_employee.1 }}" required>
                 <div class="invalid-feedback">Mobile number is required.</div>
             </div>
 
             <div class="form-group">
                 <label for="education">Education:</label>
-                <input type="text" id="education" name="education" class="form-control" value="{{ existing_employee.education }}">
+                <input type="text" id="education" name="education" class="form-control" value="{{ existing_employee.3 }}">
             </div>
 
-            <div class="form-group">
-                <label for="position">Position:</label>
-                <input type="text" id="position" name="position" class="form-control" value="{{ existing_employee.position }}">
-            </div>
 
-            <!-- Salary is read-only -->
-            <p>Salary: {{ existing_employee.salary }}</p>
+            <!-- Salary and Position is read-only -->
+            <p> <strong> Position: {{ existing_employee.4 }} </strong> </p>
+            <p> <strong> Salary: {{ existing_employee.5 }} </strong> </p>
 
             <div class="form-group">
                 <label for="new_password">New Password:</label>
-                <input type="password" id="new_password" name="new_password" class="form-control">
+                <input type="password" id="new_password" name="new_password" class="form-control" value="{{ existing_employee.6 }}" >
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>

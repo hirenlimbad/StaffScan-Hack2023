@@ -23,6 +23,8 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date
 from django.db import connection as conn
 import base64
+import uuid  
+
 # from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -230,30 +232,30 @@ def view_employee(request, employee_id):
 
 
 
-# task assingments
 def assign_task(request, employee_id, employee_name):
     try:
         admin_id = request.session['admin_id']
-    except:
+    except KeyError:
         return redirect('login-page')
+
     if request.method == 'POST':
         form = AssignTaskForm(request.POST)
         if form.is_valid():
             # Get the cleaned data from the form
-            employee_id = form.cleaned_data['employee_id']
-            employee_name = form.cleaned_data['employee_name']
+            cleaned_employee_id = form.cleaned_data['employee_id']
+            cleaned_employee_name = form.cleaned_data['employee_name']
             task_header = form.cleaned_data['task_header']
             task_description = form.cleaned_data['task_description']
             deadline = form.cleaned_data['deadline'].strftime('%Y-%m-%d')
 
-            employee_task_id = form.cleaned_data['employee_id']
+            # Generate a unique identifier for the task
+            task_id = str(uuid.uuid4())
 
-            today_date = "2023-02-02"
             # Push the data to Firebase with the new reference
-            ref = db.reference(f'tasks/{employee_task_id}/{today_date}')
+            ref = db.reference(f'tasks/{cleaned_employee_id}/{task_id}')
             ref.set({
-                'employee_id': employee_id,
-                'employee_name': employee_name,
+                'employee_id': cleaned_employee_id,
+                'employee_name': cleaned_employee_name,
                 'task_header': task_header,
                 'task_description': task_description,
                 'deadline': deadline,
@@ -261,10 +263,11 @@ def assign_task(request, employee_id, employee_name):
                 'status': 'pending'
             })
 
-
             messages.success(request, 'Task assigned successfully.')
+
+            # Redirect to the desired URL after assigning the task
             return redirect('/showTasks.html')
-        
+
         return HttpResponse("Form is not valid")
     else:
         form = AssignTaskForm()
@@ -276,34 +279,54 @@ def assign_task(request, employee_id, employee_name):
 
     return render(request, 'assignTask.html', {'form': form})
 
+# views.py
 
 def show_assigned_tasks(request):
     try:
         admin_id = request.session['admin_id']
-    except:
+    except KeyError:
         return redirect('login-page')
 
     # Fetch tasks from Firebase
     tasks_ref = db.reference('tasks')
     tasks = tasks_ref.get()
+    task_list = []
 
-    # Check if tasks were retrieved
     if tasks:
-        try:
-            task_list = [task for task in tasks.values()]
-            task_list = [task for task in task_list if task['admin_id'] == admin_id]
-            task_list.sort(key=lambda x: datetime.strptime(x['deadline'], '%Y-%m-%d'))
-            
-            # only show tasks that admin has assigned
-            task_list = [task for task in task_list if task['admin_id'] == admin_id]
-
-        except:
-            task_list = tasks
-            pass
-    else:
-        task_list = []
+        for employee_id, employee_tasks in tasks.items():
+            if isinstance(employee_tasks, dict):
+                for date, task_details in employee_tasks.items():
+                    if isinstance(task_details, dict) and task_details.get('admin_id') == admin_id:
+                        task_details['task_id'] = date  # Assign the task ID here
+                        task_details['employee_id'] = employee_id
+                        task_list.append(task_details)
 
     return render(request, 'showTasks.html', {'tasks': task_list})
+
+def dismiss_task(request, employee_id, deadline, task_id):
+    try:
+        task_ref_path = f'tasks/{employee_id}/{task_id}'
+
+        # Get a reference to the task node
+        task_ref = db.reference(task_ref_path)
+
+        # Check if the task exists
+        if task_ref.get():
+            # Remove the task from Firebase
+            task_ref.delete()
+
+            # Assuming the task dismissal is successful
+            response_data = {'status': 'success'}
+        else:
+            # Task not found
+            response_data = {'status': 'error', 'message': 'Task not found'}
+
+    except Exception as e:
+        # Handle any exceptions that might occur during the dismissal process
+        response_data = {'status': 'error', 'message': str(e)}
+
+    return JsonResponse(response_data)
+
 
 # camera field goes from here.
 def get_frame():

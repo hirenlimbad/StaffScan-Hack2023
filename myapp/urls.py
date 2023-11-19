@@ -32,18 +32,25 @@ urlpatterns = [
     path('apply_penalty/<int:employee_id>/', views.apply_penalty, name='apply_penalty'),
     path('set_timings.html', views.setTimings, name="SetTimings"),
     path('set-timings/', views.setTimings, name='set_timings'),
+    path('dismiss_task/<str:employee_id>/<str:deadline>/<str:task_id>/', views.dismiss_task, name='dismiss_task'),
 
 
 
 
 
-    # admin dashboard.
+    # Employee dashboard.
     path('employee_login', user_view.admin_login, name="employee_login"),
     path('employee_dashboard', user_view.employee_dashboard, name="employee_dashboard"),
     path('punch/', user_view.punch, name='punch'),
     path('edit_employee/', user_view.edit_employee_data, name='edit_employee_data'),
     path('leave_request/', user_view.leave_request, name='leave_request'),
     path('download_attendance', user_view.download_attendance, name='download_attendance'),
+    path('mark_task_completed/<int:employee_id>/<int:task_id>/', user_view.mark_task_completed, name='mark_task_completed'),
+    path('mark_task_completed/<str:employee_id>/<str:task_id>/', user_view.mark_task_completed, name='strmark_task_completed'),
+
+
+
+
 
 
 

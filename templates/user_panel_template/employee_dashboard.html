@@ -4,63 +4,144 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dashboard</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
     </head>
 </head>
+
 <body>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 
-    
-<div class="container mt-4">
+    <div class="container mt-4">
 
-   <h4> Hello, {{ employee_name }} </h4>
+        <h4> Hello, {{ employee_name }} </h4>
 
-    {% if punch_in_count == 0 %}
+        {% if punch_in_count == 0 %}
         <p class="alert alert-info">Status: Please Punch In</p>
         <form method="post" action="{% url 'punch' %}">
             {% csrf_token %}
             <input class="btn btn-success" type="submit" name="punch_in" value="Punch In">
         </form>
-    {% elif punch_out_count == 0 %}
+        {% elif punch_out_count == 0 %}
         <p class="alert alert-warning">Status: Please Punch Out</p>
         <form method="post" action="{% url 'punch' %}">
             {% csrf_token %}
             <input class="btn btn-danger" type="submit" name="punch_out" value="Punch Out">
         </form>
-    {% else %}
+        {% else %}
         <p class="alert alert-success">Have a nice day, your today's work is completed.</p>
-    {% endif %}
+        {% endif %}
+
+        <br><br>
 
 
-    <br><br>
-    {% if assigned_tasks %}
-        <h2>Assigned Tasks:</h2>
-        <div class="alert alert-info">
-            <strong>Task Header:</strong> {{ assigned_tasks.4 }}<br>
-            <strong>Task Description:</strong> {{ assigned_tasks.3 }}<br>
-            <strong>Deadline:</strong> {{ assigned_tasks.0 }}<br>
+
+
+        <div class="alert alert-info" id="task_{{ task_id }}">
+
+            <div class="container">
+                {% if assigned_tasks %}
+                    <h2>Assigned Tasks:</h2>
+                    {% for task in assigned_tasks %}
+                        {% if task.status != 'completed' %}
+                            <div class="alert alert-info" id="task_{{ task.task_id }}">
+                                <strong>Task ID:</strong> {{ task.task_id }}<br>
+                                <strong>Task Header:</strong> {{ task.task_header }}<br>
+                                <strong>Task Description:</strong> {{ task.task_description }}<br>
+                                <strong>Deadline:</strong> {{ task.deadline }}<br>
+                                {% if task.status == 'pending' %}
+                                    <button class="btn btn-primary"
+                                            onclick="markTaskCompleted('{{ task.employee_id }}', '{{ task.task_id }}')">Mark as Completed
+                                    </button>
+                                {% else %}
+                                    <span class="text-success">Completed</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No assigned tasks.</p>
+                {% endif %}
+            </div>
+            
+            
         </div>
-    {% endif %}
 
-    <br><br><br><br>
 
-    {% if leave_request_status == "approved" %}
+
+
+
+
+
+
+
+
+
+        <br><br><br><br>
+
+        {% if leave_request_status == "approved" %}
         <p class="alert alert-success">Leave Request: Approved</p>
-    {% elif leave_request_status == "declined" %}
+        {% elif leave_request_status == "declined" %}
         <p class="alert alert-danger">Leave Request: Declined</p>
-    {% else %}
+        {% else %}
         <p class="alert alert-info">Leave Request: Pending</p>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 
-<!-- Add Bootstrap JS and jQuery scripts here if needed -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Add a click event listener to the dismiss buttons
+        $('.dismiss-btn').on('click', function () {
+            var employeeId = $(this).data('employee-id');
+            var deadline = $(this).data('deadline');
+            var taskId = $(this).data('task-id');
+    
+            // Confirm dismissal with a prompt or modal if needed
+    
+            // Get the CSRF token from the cookie
+            var csrfToken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
+    
+            // Send AJAX request to dismiss the task
+            $.ajax({
+                url: `/dismiss_task/${employeeId}/${deadline}/${taskId}/`,
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function (response) {
+                    console.log('Task dismissed successfully');
+                    // Update the UI, remove the task row or take other necessary actions
+                    // For example, you can remove the entire row from the table
+                    $('#tasks-table').find(`tr[data-task-id="${taskId}"]`).remove();
+                },
+                error: function (error) {
+                    console.error('Failed to dismiss task', error);
+                }
+            });
+        });
+    </script>
+    
+    
+
+    </script>
+
+
 
 </body>
+
 </html>
 
 {% endblock body %}

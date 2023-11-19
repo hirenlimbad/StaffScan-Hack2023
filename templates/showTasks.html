@@ -1,19 +1,23 @@
+<!-- showTasks.html -->
+
 {% extends "navbar.html" %}
 {% block title %}showTask{% endblock title %}
 {% block body %}
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Assigned Tasks</title>
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <!-- Add the Bootstrap CSS link here if needed -->
 </head>
+
 <body>
     <div class="container">
         <h1 class="mt-5" style="text-align: center; font-weight: bold;">Assigned Tasks</h1>
+        <div class="form-group mt-3"></div>
         {% if tasks %}
-        <div class="table table-responsive">
-            <table class="table table-responsive">
+        <div class="table-responsive">
+            <table class="table" id="tasks-table">
                 <thead class="bg-primary text-white">
                     <tr>
                         <th>Employee ID</th>
@@ -21,29 +25,72 @@
                         <th>Task Header</th>
                         <th>Task Description</th>
                         <th>Deadline</th>
+                        <th>Dismiss</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for task in tasks %}
-                    <tr>
+                    <tr data-task-id="{{ task.task_id }}">
                         <td>{{ task.employee_id }}</td>
                         <td>{{ task.employee_name }}</td>
                         <td>{{ task.task_header }}</td>
                         <td>{{ task.task_description }}</td>
                         <td>{{ task.deadline }}</td>
+                        <td>
+                            <button class="btn btn-danger dismiss-btn" data-employee-id="{{ task.employee_id }}"
+                                data-deadline="{{ task.deadline }}" data-task-id="{{ task.task_id }}">Dismiss</button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-            <p>No tasks have been assigned.</p>
+        <p>No tasks have been assigned.</p>
         {% endif %}
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Your other scripts and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Add a click event listener to the dismiss buttons
+        $('.dismiss-btn').on('click', function () {
+            var employeeId = $(this).data('employee-id');
+            var deadline = $(this).data('deadline');
+            var taskId = $(this).data('task-id');
+    
+            // Confirm dismissal with a prompt or modal if needed
+    
+            // Get the CSRF token using Django template tag
+            var csrfToken = '{{ csrf_token }}';
+    
+            // Send AJAX request to dismiss the task
+            $.ajax({
+                url: `/dismiss_task/${employeeId}/${deadline}/${taskId}/`,
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function (response) {
+                    console.log('Task dismissed successfully');
+                    // Update the UI, remove the task row or take other necessary actions
+                    // For example, you can remove the entire row from the table
+                    $('#tasks-table').find(`tr[data-task-id="${taskId}"]`).remove();
+                },
+                error: function (error) {
+                    console.error('Failed to dismiss task', error);
+                }
+            });
+        });
+    </script>
+    
+
 </body>
+
 </html>
 {% endblock body %}

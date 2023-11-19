@@ -122,53 +122,36 @@ def punch(request):
     return redirect('employee_dashboard')
 
 def employee_dashboard(request):
+    admin_id = request.session.get('admin_id')
     current_date = date.today()
     employee_id = request.session.get('employee_id')
 
-    # Retrieve assigned tasks for the employee from Firebase
-    assigned_tasks_ref = db.reference('tasks/' + str(employee_id))
-    assigned_tasks = assigned_tasks_ref.get()
-
-    # Retrieve leave request status from Firebase
+    # Retrieve assigned tasks from Firebase for the current employee
     leave_request_status_ref = db.reference(f'leave_requests/{employee_id}/status')
     leave_request_status = leave_request_status_ref.get()
 
-    # Retrieve leave requests from Firebase
-    leave_requests_ref = db.reference(f'leave_requests/{employee_id}')
-    leave_requests = leave_requests_ref.get()
+    # assigned task
+    assigned_tasks_ref = db.reference(f'tasks/{employee_id}')
+    assigned_tasks_data = assigned_tasks_ref.get()
 
-    # Ensure the assigned tasks exist and convert them to a list
-    if assigned_tasks is not None:
-        assigned_tasks = list(assigned_tasks.values())
-    else:
-        assigned_tasks = []
+    # Convert the tasks data to a list with task ID included
+    assigned_tasks = []
+    if assigned_tasks_data is not None:
+        for task_id, task_data in assigned_tasks_data.items():
+            task_data['task_id'] = task_id
+            assigned_tasks.append(task_data)
+    # end assigned task
 
     # Initialize other variables with default values
     punch_in_count = 0
     punch_out_count = 0
     employee_name = ""
 
-    with connection.cursor() as cursor:
-        # Check if the employee has punched in on the current date
-        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s", (employee_id, current_date))
-        result = cursor.fetchone()
-        if result:
-            punch_in_count = result[0]
+    leave_requests_ref = db.reference(f'leave_requests/{employee_id}')
+    leave_requests = leave_requests_ref.get()
 
-        # Check if the employee has punched out on the current date
-        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(End_Time) = %s", (employee_id, current_date))
-        result = cursor.fetchone()
-        if result:
-            punch_out_count = result[0]
+    # Your existing code for getting punch counts, employee name, etc.
 
-        cursor.execute("SELECT Name FROM Employee WHERE EmployeeID = %s", (employee_id,))
-        result = cursor.fetchone()
-        if result:
-            employee_name = result[0]
-
-
-        cursor.execute("SELECT admin_id FROM Employee WHERE EmployeeID = %s", (employee_id,))
-        admin_id = cursor.fetchone()[0]
     return render(request, 'user_panel_template/employee_dashboard.html', {
         'punch_in_count': punch_in_count,
         'punch_out_count': punch_out_count,
@@ -176,10 +159,24 @@ def employee_dashboard(request):
         'employee_name': employee_name,
         'leave_request_status': leave_request_status,
         'leave_requests': leave_requests,
-        'admin_id': admin_id
+        'admin_id': admin_id,
+        'current_date': date.today(),
     })
+# Existing code
 
 
+def mark_task_completed(request, employee_id, task_id):
+    print("Marking task as completed")  
+
+    # Update the status of the task to 'completed' in Firebase
+    task_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
+    task_ref.set('completed')
+
+    # Update the completed message for the task
+    task_completed_message_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/completed_message')
+    task_completed_message_ref.set('Task completed successfully!')
+
+    return JsonResponse({'status': 'success'})
 
 def edit_employee_data(request):
     if request.method == 'POST':
@@ -189,14 +186,13 @@ def edit_employee_data(request):
             mobile = request.POST['mobile_number']
             email = request.POST['email']
             education = request.POST['education']
-            position = request.POST['position']
             new_password = request.POST['new_password']  # New password field
             employee_id = request.session.get('employee_id')
 
             with conn.cursor() as cursor:
                 # Define the SQL UPDATE statement
-                update_query = "UPDATE Employee SET Name = %s, MobileNumber = %s, EmailID = %s, education = %s, position = %s, password = %s WHERE EmployeeID = %s"
-                values = (name, mobile, email, education, position, new_password, employee_id)  # Include new password
+                update_query = "UPDATE Employee SET Name = %s, MobileNumber = %s, EmailID = %s, education = %s, password = %s WHERE EmployeeID = %s"
+                values = (name, mobile, email, education, new_password, employee_id)  # Include new password
 
                 # Execute the UPDATE statement with the values
                 cursor.execute(update_query, values)
@@ -219,26 +215,16 @@ def edit_employee_data(request):
 
 def get_existing_employee_data(employee_id):
     try:
-        conn = mysql.connector.connect(
-            host = "hiren88.mysql.pythonanywhere-services.com", # databases.000webhost.com
-            user="hiren88",
-            password="ipassword",
-            database="hiren88$hackathon")
-
-        cursor = conn.cursor(dictionary=True)
-
+        cursor = conn.cursor()
         # Retrieve the existing employee data based on the employee ID
-        query = "SELECT Name, MobileNumber, EmailID, education, position, salary FROM Employee WHERE EmployeeID = %s"
+        query = "SELECT Name, MobileNumber, EmailID, education, position, salary, password FROM Employee WHERE EmployeeID = %s"
         cursor.execute(query, (employee_id,))
-
         existing_employee = cursor.fetchone()
         return existing_employee
 
     except mysql.connector.Error as e:
         print(f"Error: {e}")
         return None
-
-
 
 
 @csrf_exempt
@@ -272,15 +258,7 @@ def leave_request(request):
     # Retrieve the remaining leave data from the MySQL database
     try:
         employee_id = request.session.get('employee_id')
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="unknown",
-            password="password",
-            database="hackathon"
-        )
-
-        cursor = conn.cursor(dictionary=True)
-
+        cursor = conn.cursor()
         query = "SELECT remaining_leave FROM Employee WHERE EmployeeID = %s"
         cursor.execute(query, (employee_id,))
         leaves = cursor.fetchone()
