@@ -186,14 +186,35 @@ def mark_task_completed(request, employee_id, task_id):
     print("Marking task as completed")  
 
     # Update the status of the task to 'completed' in Firebase
-    task_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
-    task_ref.set('completed')
-
-    # Update the completed message for the task
-    task_completed_message_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/completed_message')
-    task_completed_message_ref.set('Task completed successfully!')
+    task_ref = db.reference(f'tasks/{employee_id}/{task_id}')
+    task_ref.update({
+        'status': 'completed',
+    })
 
     return JsonResponse({'status': 'success'})
+
+
+
+# def mark_task_completed(request, employee_id, task_id):
+#     print("Marking task as completed")  
+
+#     # Check if the task is already marked as completed in Firebase
+#     task_status_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
+#     task_status = task_status_ref.get()
+
+#     if task_status != 'completed':
+#         # Update the status of the task to 'completed' in Firebase
+#         task_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
+#         task_ref.set('completed')
+
+#         # Update the completed message for the task
+#         task_completed_message_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/completed_message')
+#         task_completed_message_ref.set('Task completed successfully!')
+
+#         return JsonResponse({'status': 'success'})
+#     else:
+#         # Task is already completed, no need to update again
+#         return JsonResponse({'status': 'already_completed'})
 
 def edit_employee_data(request):
     if request.method == 'POST':

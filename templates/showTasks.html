@@ -25,6 +25,7 @@
                         <th>Task Header</th>
                         <th>Task Description</th>
                         <th>Deadline</th>
+                        <th>Status</th> <!-- New line added -->
                         <th>Dismiss</th>
                     </tr>
                 </thead>
@@ -35,6 +36,7 @@
                         <td>{{ task.employee_name }}</td>
                         <td>{{ task.task_header }}</td>
                         <td>{{ task.task_description }}</td>
+                        <td>{{ task.status }}</td>
                         <td>{{ task.deadline }}</td>
                         <td>
                             <button class="btn btn-danger dismiss-btn" data-employee-id="{{ task.employee_id }}"

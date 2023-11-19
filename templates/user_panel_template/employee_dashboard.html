@@ -6,19 +6,13 @@
 <html>
 
 <head>
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard</title>
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-    </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
 
     <div class="container mt-4">
 
@@ -42,48 +36,32 @@
 
         <br><br>
 
-
-
-
         <div class="alert alert-info" id="task_{{ task_id }}">
-
             <div class="container">
                 {% if assigned_tasks %}
-                    <h2>Assigned Tasks:</h2>
-                    {% for task in assigned_tasks %}
-                        {% if task.status != 'completed' %}
-                            <div class="alert alert-info" id="task_{{ task.task_id }}">
-                                <strong>Task ID:</strong> {{ task.task_id }}<br>
-                                <strong>Task Header:</strong> {{ task.task_header }}<br>
-                                <strong>Task Description:</strong> {{ task.task_description }}<br>
-                                <strong>Deadline:</strong> {{ task.deadline }}<br>
-                                {% if task.status == 'pending' %}
-                                    <button class="btn btn-primary"
-                                            onclick="markTaskCompleted('{{ task.employee_id }}', '{{ task.task_id }}')">Mark as Completed
-                                    </button>
-                                {% else %}
-                                    <span class="text-success">Completed</span>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                <h2>Assigned Tasks:</h2>
+                {% for task in assigned_tasks %}
+                {% if task.status != 'completed' %}
+                <div class="alert alert-info" id="task_{{ task.task_id }}">
+                    <strong>Task ID:</strong> {{ task.task_id }}<br>
+                    <strong>Task Header:</strong> {{ task.task_header }}<br>
+                    <strong>Task Description:</strong> {{ task.task_description }}<br>
+                    <strong>Deadline:</strong> {{ task.deadline }}<br>
+                    {% if task.status == 'pending' %}
+                    <button class="btn btn-primary mark-as-completed-btn"
+                        onclick="markTaskCompleted('{{ task.employee_id }}', '{{ task.task_id }}')">Mark as Completed
+                    </button>
+                    {% else %}
+                    <span class="text-success task-status">Completed</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
                 {% else %}
-                    <p>No assigned tasks.</p>
+                <p>No assigned tasks.</p>
                 {% endif %}
             </div>
-            
-            
         </div>
-
-
-
-
-
-
-
-
-
-
 
         <br><br><br><br>
 
@@ -96,49 +74,65 @@
         {% endif %}
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Your existing HTML code -->
 
+    <!-- Add this script at the end of your body -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // Add a click event listener to the dismiss buttons
-        $('.dismiss-btn').on('click', function () {
-            var employeeId = $(this).data('employee-id');
-            var deadline = $(this).data('deadline');
-            var taskId = $(this).data('task-id');
-    
-            // Confirm dismissal with a prompt or modal if needed
-    
-            // Get the CSRF token from the cookie
-            var csrfToken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
-    
-            // Send AJAX request to dismiss the task
-            $.ajax({
-                url: `/dismiss_task/${employeeId}/${deadline}/${taskId}/`,
-                type: 'POST',
-                dataType: 'json',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                success: function (response) {
-                    console.log('Task dismissed successfully');
-                    // Update the UI, remove the task row or take other necessary actions
-                    // For example, you can remove the entire row from the table
-                    $('#tasks-table').find(`tr[data-task-id="${taskId}"]`).remove();
-                },
-                error: function (error) {
-                    console.error('Failed to dismiss task', error);
-                }
-            });
-        });
+        // Define the markTaskCompleted function
+        function markTaskCompleted(employeeId, taskId) {
+    console.log('Clicked Mark as Completed button');
+    console.log('Employee ID:', employeeId);
+    console.log('Task ID:', taskId);
+
+    // Get the CSRF token from the cookie
+    var csrfToken = getCookie('csrftoken');
+
+    // Update the URL based on your URL pattern for marking tasks completed
+    var markTaskURL = `/mark_task_completed/${employeeId}/${taskId}/`;
+
+    // Send an AJAX request to mark the task as completed
+    $.ajax({
+        url: markTaskURL,
+        type: 'POST',
+        data: {
+            'employee_id': employeeId,
+            'task_id': taskId,
+            'csrfmiddlewaretoken': csrfToken  // Include the CSRF token in the data
+        },
+        dataType: 'json',
+        success: function (response) {
+            console.log('AJAX request successful');
+            if (response.status === 'success') {
+                // Update the UI, change the task status and display a message
+                var taskElement = $(`#task_${taskId}`);
+                taskElement.find('.task-status').text('Completed');
+                taskElement.find('.mark-as-completed-btn').remove(); // Remove the button
+
+                // You can also add a message element
+                taskElement.append('<p class="text-success">Task completed successfully!</p>');
+            } else {
+                console.error('Failed to mark task as completed.');
+            }
+        },
+        error: function () {
+            console.error('Failed to send request.');
+        }
+    });
+}
+
+// Function to get CSRF token from cookie
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
     </script>
-    
-    
 
-    </script>
-
-
+    <!-- Rest of your HTML code -->
 
 </body>
 
