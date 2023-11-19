@@ -154,18 +154,18 @@ def employee_dashboard(request):
         # Check if the employee has punched in on the current date
         cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s", (employee_id, current_date))
         result = cursor.fetchone()
-        if result:
+        if result is not None:  # Check for None
             punch_in_count = result[0]
 
         # Check if the employee has punched out on the current date
         cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(End_Time) = %s", (employee_id, current_date))
         result = cursor.fetchone()
-        if result:
+        if result is not None:  # Check for None
             punch_out_count = result[0]
 
         cursor.execute("SELECT Name FROM Employee WHERE EmployeeID = %s", (employee_id,))
         result = cursor.fetchone()
-        if result:
+        if result is not None:  # Check for None
             employee_name = result[0]
 
     return render(request, 'user_panel_template/employee_dashboard.html', {
