@@ -130,7 +130,7 @@ def employee_dashboard(request):
     leave_request_status_ref = db.reference(f'leave_requests/{employee_id}/status')
     leave_request_status = leave_request_status_ref.get()
 
-    # assigned task
+    # Assigned tasks
     assigned_tasks_ref = db.reference(f'tasks/{employee_id}')
     assigned_tasks_data = assigned_tasks_ref.get()
 
@@ -140,7 +140,7 @@ def employee_dashboard(request):
         for task_id, task_data in assigned_tasks_data.items():
             task_data['task_id'] = task_id
             assigned_tasks.append(task_data)
-    # end assigned task
+    # End assigned tasks
 
     # Initialize other variables with default values
     punch_in_count = 0
@@ -150,7 +150,23 @@ def employee_dashboard(request):
     leave_requests_ref = db.reference(f'leave_requests/{employee_id}')
     leave_requests = leave_requests_ref.get()
 
-    # Your existing code for getting punch counts, employee name, etc.
+    with connection.cursor() as cursor:
+        # Check if the employee has punched in on the current date
+        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s", (employee_id, current_date))
+        result = cursor.fetchone()
+        if result:
+            punch_in_count = result[0]
+
+        # Check if the employee has punched out on the current date
+        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(End_Time) = %s", (employee_id, current_date))
+        result = cursor.fetchone()
+        if result:
+            punch_out_count = result[0]
+
+        cursor.execute("SELECT Name FROM Employee WHERE EmployeeID = %s", (employee_id,))
+        result = cursor.fetchone()
+        if result:
+            employee_name = result[0]
 
     return render(request, 'user_panel_template/employee_dashboard.html', {
         'punch_in_count': punch_in_count,
@@ -162,6 +178,7 @@ def employee_dashboard(request):
         'admin_id': admin_id,
         'current_date': date.today(),
     })
+
 # Existing code
 
 
