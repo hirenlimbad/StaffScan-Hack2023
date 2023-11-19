@@ -52,6 +52,7 @@ class employeeManagement:
         password = email
         education = form.cleaned_data.get('education')
         position = form.cleaned_data.get('position')
+        arrival_time = form.cleaned_data.get('arrival_time')
         salary = form.cleaned_data.get('salary')
         photo1 = form.cleaned_data.get('faceImage').read()  # Read the binary data from the image file
 
@@ -60,9 +61,9 @@ class employeeManagement:
             cursor = self.conn.cursor()
 
             # Define the SQL INSERT statement
-            insert_query = "INSERT INTO Employee (Name, MobileNumber, EmailID, password, education, position, salary, faceImage, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            insert_query = "INSERT INTO Employee (Name, MobileNumber, EmailID, password, education, position, arrival_time, salary, faceImage, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             # Execute the INSERT statement with the values
-            cursor.execute(insert_query, (name, mobile, email, password, education, position, salary, photo1, admin_id))
+            cursor.execute(insert_query, (name, mobile, email, password, education, position, arrival_time, salary, photo1, admin_id))
 
             # Commit the transaction
             self.conn.commit()
