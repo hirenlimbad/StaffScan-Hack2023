@@ -35,6 +35,8 @@
 </head>
 
 <body>
+
+    <br>
     {% csrf_token %}
     <div class="container">
         <form action="deleteEmployee.html" method="post" oninput="toggleSubmitButton('delete')">
@@ -107,10 +109,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+            currunt time: {{ current_time }}
         </div>
 
     </div>
     </div>
+
+
 
     <!-- jQuery and custom scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -196,6 +201,8 @@
             }
         });
     </script>
+
+
 
 </body>
 

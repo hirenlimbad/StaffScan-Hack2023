@@ -33,6 +33,11 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://hackathon2023-4c407-default-rtdb.firebaseio.com'
 })
 
+# settings for indina time zone
+import pytz
+IST = pytz.timezone('Asia/Kolkata')
+
+
 
 def admin_login(request):    
     if request.method == 'POST':
@@ -84,7 +89,9 @@ def punch(request):
         return redirect('employee_login')
 
     employee_id = request.session.get('employee_id')
-    current_time = timezone.now()
+
+    # current_time will from india time zone
+    current_time = datetime.now(IST)
     current_date = date.today()
 
     with connection.cursor() as cursor:

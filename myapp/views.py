@@ -45,8 +45,10 @@ def login_view(request):
             request.session['admin_id'] = user
             employees = employeeManagement().showAllEmployees(user)
             isPresent = employeeManagement().isPresent()
+            currunt_time = datetime.now()
             return render(request, 'showEmployee.html', {'employees': employees,
-                                                         'isPresent': isPresent})
+                                                         'isPresent': isPresent,
+                                                         'current_time': currunt_time})
 
         text = {"error_message": "Sorry! incorrect user name or password."}
         return render(request, 'LoginPage.html', text)
@@ -80,14 +82,18 @@ def add_employee(request):
 def employee_list(request):
     try:
         admin_id = request.session['admin_id']
+        current_time = datetime.now()
+        print("time is: ",current_time)
     except:
         return redirect('login-page')
     employees = employeeManagement().showAllEmployees(admin_id)
     present = employeeManagement().isPresent()
     message = messages.get_messages(request)
+
     return render(request, 'showEmployee.html', {'employees': employees,
                                                  'isPresent': present,
-                                                 'message' : message})
+                                                 'message' : message,
+                                                 'current_time': current_time})
 
 def get_latest_employee_data(request):
     try:
@@ -498,24 +504,27 @@ def apply_penalty(request, employee_id):
     except:
         return redirect('login-page')
     # Establish a connection to the MySQL database
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="unknown",
-        password="password",
-        database="hackathon"
-    )
     cursor = conn.cursor()
 
     # Get the current salary from the database
-    cursor.execute("SELECT salary FROM Employee WHERE EmployeeID = %s", (employee_id,))
-    current_salary = cursor.fetchone()[0]
+    cursor.execute("SELECT penalty FROM Employee WHERE EmployeeID = %s", (employee_id,))
+    penalty = cursor.fetchone()[0]
 
     # Calculate the new salary after reducing by 1000
-    new_salary = current_salary - 1000
+
+    if penalty is not None:
+        penalty = penalty + 1000
+    else:
+        penalty = 1000
 
     # Update the salary in the database
-    update_query = "UPDATE Employee SET salary = %s WHERE EmployeeID = %s"
-    cursor.execute(update_query, (new_salary, employee_id))
+    update_query = "UPDATE Employee SET penalty = %s WHERE EmployeeID = %s"
+    cursor.execute(update_query, (penalty, employee_id))
+    conn.commit()
+
+    # after applying penalty, update the late streak to 0
+    update_query = "UPDATE EMPLOYEE_ATTENDANCE SET islate = 0 WHERE EmployeeID = %s"
+    cursor.execute(update_query, (employee_id,))
     conn.commit()
     return redirect('late_employee')
 

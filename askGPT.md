@@ -1,70 +1,124 @@
-brainstorm
-in employee attendance system i have one table structure where it shows employee start time and end time.instead i want a calendar with all days. if employee present than it calendar will show different color for that day.
+in employee attendance system i have one table structure where it has penulty to employee for who employees are late. see i have UI for that give me an sql query for that if penulty applies than islate == 0 in the employee attendance table for respective employee.
 
-here is my relavent code
-def view_employee(request, employee_id):
+
+
+
+
+def apply_penalty(request, employee_id):
     try:
         admin_id = request.session['admin_id']
-    except KeyError:
+    except:
         return redirect('login-page')
+    # Establish a connection to the MySQL database
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="unknown",
+        password="password",
+        database="hackathon"
+    )
+    cursor = conn.cursor()
 
-    # Fetch employee details
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s",
-            (employee_id,))
-        employee = cursor.fetchone()
+    # Get the current salary from the database
+    cursor.execute("SELECT penalty FROM Employee WHERE EmployeeID = %s", (employee_id,))
+    penalty = cursor.fetchone()[0]
 
-        # Convert the faceImage blob to base64 encoding for displaying in HTML
-        if employee and employee[8]:
-            employee_image_base64 = base64.b64encode(employee[8]).decode('utf-8')
-            employee = employee[:8] + (employee_image_base64,)
-        else:
-            employee = employee[:8] + (None,)
+    # Calculate the new salary after reducing by 1000
+    new_salary = penalty + 1000
 
-        # Fetch employee attendance data
-        cursor.execute(
-            "SELECT AttendanceID, Start_Time, End_Time, leave_start, leave_end, islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s",
-            (employee_id,))
-        rows = cursor.fetchall()
+    # Update the salary in the database
+    update_query = "UPDATE Employee SET penalty = %s WHERE EmployeeID = %s"
+    cursor.execute(update_query, (penalty, employee_id))
+    conn.commit()
+    return redirect('late_employee')
 
-        # Convert tuples to dictionaries and format datetime objects
-        attendance_data = []
-        for row in rows:
-            entry = {
-                'AttendanceID': row[0],
-                'Start_Time': datetime.strftime(row[1], '%Y-%m-%d %H:%M:%S') if row[1] else None,
-                'End_Time': datetime.strftime(row[2], '%Y-%m-%d %H:%M:%S') if row[2] else None,
-                'leave_start': row[3],
-                'leave_end': row[4],
-                'islate': row[5]
-            }
-            attendance_data.append(entry)
-        print(attendance_data)
-    # Pass the data to the template for rendering
-    return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data})
+CREATE TABLE `EMPLOYEE_ATTENDANCE` (
+  `AttendanceID` int NOT NULL AUTO_INCREMENT,
+  `EmployeeID` int DEFAULT NULL,
+  `Start_Time` datetime DEFAULT NULL,
+  `End_Time` datetime DEFAULT NULL,
+  `leave_start` datetime DEFAULT NULL,
+  `leave_end` datetime DEFAULT NULL,
+  `islate` tinyint DEFAULT NULL,
+  PRIMARY KEY (`AttendanceID`),
+  KEY `EmployeeID` (`EmployeeID`),
+  CONSTRAINT `fk_employee_attendance` FOREIGN KEY (`EmployeeID`) REFERENCES `Employee` (`EmployeeID`),
+  CONSTRAINT `fk_employee_attendance_employee` FOREIGN KEY (`EmployeeID`) REFERENCES `Employee` (`EmployeeID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-template code
- <div class="table-container">
-            <table>
-                <thead>
+template code,
+{% extends "navbar.html" %}
+{% block title %}Home{% endblock title %}
+{% block body %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Late Days</title>
+    <!-- Include Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <!-- Include CSRF Token -->
+
+    <style>
+
+        body {
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    {% csrf_token %}
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-3">Late Employee</h1>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Last Punch In Time</th>
+                    <th>Late Days</th>
+                    <th>Consecutive Late</th>
+                    <th>Penalty</th> <!-- New column for the "Penalty" button -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
                     <tr>
-                        <th>Date</th>
-                        <th>Punch-In Time</th>
-                        <th>Punch-Out Time</th>
-                        <th>Is Late</th>
+                        <td>{{ employee.EmployeeID }}</td>
+                        <td>{{ employee.Name }}</td>
+                        <td>{{ employee.Position }}</td>
+                        <td>{{ employee.last_punch_in_time }}</td>
+                        <td>{{ employee.late_days }}</td>
+                        <td>{{ employee.consecutive_late }}</td>
+                        <td><button class="btn btn-primary penalty-button" data-employeeid="{{ employee.EmployeeID }}">Penalty</button></td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for entry in attendance_data %}
-                        <tr>
-                            <td>{{ entry.Start_Time }}</td>
-                            <td>{{ entry.Start_Time }}</td>
-                            <td>{% if entry.End_Time %}{{ entry.End_Time }}{% else %}Missed{% endif %}</td>
-                            <td>{{ entry.islate }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Include Bootstrap JS and Popper.js for Bootstrap features (optional) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.penalty-button').click(function() {
+                var employeeID = $(this).data('employeeid');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/apply_penalty/' + employeeID + '/', // Define the correct URL based on your project structure
+                    data: { csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val() },
+                    success: function(response) {
+                        // Handle the response from the server, e.g., show a success message
+                        console.log(response);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock body %}
