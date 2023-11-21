@@ -85,12 +85,10 @@ def get_consecutive_on_time_days(employee_id, current_date):
 def punch(request):
     try:
         employee_id = request.session['employee_id']
-    except:
+    except KeyError:
         return redirect('employee_login')
 
-    employee_id = request.session.get('employee_id')
-
-    # current_time will from india time zone
+    # current_time will be in India time zone
     current_time = datetime.now(IST)
     current_date = date.today()
 
@@ -105,12 +103,16 @@ def punch(request):
                     cursor.execute("SELECT arrival_time FROM Employee WHERE EmployeeID = %s", (employee_id,))
                     arrival_time = cursor.fetchone()[0]
 
-                    # Make expected arrival time timezone-aware
-                    expected_arrival_datetime = datetime.combine(current_date, arrival_time, tzinfo=timezone.utc)
+                    print(f"Expected arrival time: {arrival_time} and is late: ", end="")
+
+                    # Convert arrival_time to datetime and make it timezone-aware
+                    arrival_datetime = datetime.combine(current_date, arrival_time)
+                    arrival_datetime_aware = IST.localize(arrival_datetime)
 
                     # Calculate if the employee is late
-                    late_threshold = timedelta(minutes=15)  # Adjust this threshold as needed
-                    is_late = current_time > (expected_arrival_datetime + late_threshold)
+                    late_threshold = timedelta(minutes=60)  # Adjust this threshold as needed
+                    is_late = current_time > (arrival_datetime_aware + late_threshold)
+                    print("current time: ", current_time, is_late, (arrival_datetime_aware + late_threshold))
 
                     # Punch In
                     cursor.execute("INSERT INTO EMPLOYEE_ATTENDANCE (EmployeeID, Start_Time, islate) VALUES (%s, %s, %s)", (employee_id, current_time, int(is_late)))
@@ -131,6 +133,7 @@ def punch(request):
                     connection.commit()
 
     return redirect('employee_dashboard')
+
 
 def employee_dashboard(request):
     try:

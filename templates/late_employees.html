@@ -5,6 +5,7 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Employee Late Days</title>
     <!-- Include Bootstrap CSS -->
@@ -12,7 +13,6 @@
     <!-- Include CSRF Token -->
 
     <style>
-
         body {
             color: white;
             font-family: Arial, sans-serif;
@@ -20,6 +20,7 @@
     </style>
     {% csrf_token %}
 </head>
+
 <body>
     <div class="container">
         <h1 class="mt-3">Late Employee</h1>
@@ -37,15 +38,16 @@
             </thead>
             <tbody>
                 {% for employee in employees %}
-                    <tr>
-                        <td>{{ employee.EmployeeID }}</td>
-                        <td>{{ employee.Name }}</td>
-                        <td>{{ employee.Position }}</td>
-                        <td>{{ employee.last_punch_in_time }}</td>
-                        <td>{{ employee.late_days }}</td>
-                        <td>{{ employee.consecutive_late }}</td>
-                        <td><button class="btn btn-primary penalty-button" data-employeeid="{{ employee.EmployeeID }}">Penalty</button></td>
-                    </tr>
+                <tr>
+                    <td>{{ employee.EmployeeID }}</td>
+                    <td>{{ employee.Name }}</td>
+                    <td>{{ employee.Position }}</td>
+                    <td>{{ employee.last_punch_in_time }}</td>
+                    <td>{{ employee.late_days }}</td>
+                    <td>{{ employee.consecutive_late }}</td>
+                    <td><button class="btn btn-primary penalty-button"
+                            data-employeeid="{{ employee.EmployeeID }}">Penalty</button></td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -54,22 +56,28 @@
     <!-- Include Bootstrap JS and Popper.js for Bootstrap features (optional) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.penalty-button').click(function() {
+        $(document).ready(function () {
+            $('.penalty-button').click(function () {
                 var employeeID = $(this).data('employeeid');
 
                 $.ajax({
                     type: 'POST',
                     url: '/apply_penalty/' + employeeID + '/', // Define the correct URL based on your project structure
                     data: { csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val() },
-                    success: function(response) {
+                    success: function (response) {
                         // Handle the response from the server, e.g., show a success message
                         console.log(response);
+                        // hiding button of penualty if it is applied
+                        $('.penalty-button[data-employeeid=' + employeeID + ']').hide();
+                        // setting message to the user
+                        $('.penalty-button[data-employeeid=' + employeeID + ']').parent().append('<p>Penalty applied</p>');
+                        
                     }
                 });
             });
         });
     </script>
 </body>
+
 </html>
 {% endblock body %}

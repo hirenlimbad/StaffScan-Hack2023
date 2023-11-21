@@ -22,6 +22,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, date
 from django.db import connection as conn
+from django.db import transaction
 import base64
 import uuid  
 
@@ -221,9 +222,10 @@ def view_employee(request, employee_id):
     # Fetch employee details
     with connection.cursor() as cursor:
         cursor.execute(
-            "SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s",
+            "SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage, penalty FROM Employee WHERE EmployeeID = %s",
             (employee_id,))
         employee = cursor.fetchone()
+        penualty = employee[-1] 
 
         # Convert the faceImage blob to base64 encoding for displaying in HTML
         if employee and employee[8]:
@@ -253,7 +255,7 @@ def view_employee(request, employee_id):
             attendance_data.append(entry)
         print(attendance_data)
     # Pass the data to the template for rendering
-    return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data})
+    return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data, 'penualty': penualty})
 
 
 def assign_task(request, employee_id, employee_name):
@@ -524,10 +526,12 @@ def apply_penalty(request, employee_id):
 
     # after applying penalty, update the late streak to 0
     update_query = "UPDATE EMPLOYEE_ATTENDANCE SET islate = 0 WHERE EmployeeID = %s"
-    cursor.execute(update_query, (employee_id,))
+    affected_rows = cursor.execute(update_query, (employee_id,))
     conn.commit()
-    return redirect('late_employee')
 
+    if affected_rows > 0:
+        return HttpResponse("Penalty applied successfully.")
+    return redirect('late_employee')
 
 from django.db import IntegrityError
 
