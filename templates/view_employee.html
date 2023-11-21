@@ -32,76 +32,147 @@
         .container {
             border-radius: 10px;
         }
-    </style>
+
+        .parent_class{
+            display: flex;
+            align-content: center;
+        }
+
+        .emp_details {
+            width: 50%;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .attendance {
+            width: 50%;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        /* responsive ui code */
+        @media screen and (max-width: 768px) {
+            .parent_class{
+                display: block;
+            }
+            .emp_details {
+                width: 100%;
+            }
+
+            .attendance {
+                width: 100%;
+            }
+        }
+</style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h1 class="mt-5">Employee Details</h1>
-        
+    <div class="parent_class">
 
-        <table class="view_table mt-4">
-            <tbody>
-                <tr>
-                    <th scope="row">Employee ID</th>
-                    <td>{{ employee.0 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Name</th>
-                    <td>{{ employee.1 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Mobile Number</th>
-                    <td>{{ employee.2 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Email ID</th>
-                    <td>{{ employee.3 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Education</th>
-                    <td>{{ employee.5 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Position</th>
-                    <td>{{ employee.6 }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Salary</th>
-                    <td>{{ employee.7 }}</td>
-                </tr>
+        <div class="emp_details">
+            <div class="container">
+                <h1 class="mt-5">Employee Details</h1>
 
-                <tr>
-                    <th scope="row">Employee Image</th>
-                    <td>
-                        {% if employee.8 %}
-                        <img src="data:image/png;base64,{{ employee.8 }}" alt="Employee Image"
-                            style="max-width: 200px; max-height: 200px;">
-                        {% else %}
-                        No Image Available
-                        {% endif %}
-                    </td>
 
-                </tr>
-            </tbody>
+                <table class="view_table mt-4">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Employee ID</th>
+                            <td>{{ employee.0 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td>{{ employee.1 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Mobile Number</th>
+                            <td>{{ employee.2 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email ID</th>
+                            <td>{{ employee.3 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Education</th>
+                            <td>{{ employee.5 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Position</th>
+                            <td>{{ employee.6 }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Salary</th>
+                            <td>{{ employee.7 }}</td>
+                        </tr>
 
-        </table>
-        <br>
-        <form action="/editEmployee.html" method="post" oninput="toggleSubmitButton('edit')">
-            {% csrf_token %}
-            {{ error_message }}
+                        <tr>
+                            <th scope="row">Employee Image</th>
+                            <td>
+                                {% if employee.8 %}
+                                <img src="data:image/png;base64,{{ employee.8 }}" alt="Employee Image"
+                                    style="max-width: 200px; max-height: 200px;">
+                                {% else %}
+                                No Image Available
+                                {% endif %}
+                            </td>
 
-            <!-- Add a hidden input field to store the employee ID -->
-            <input type="hidden" id="edit-employee-id" name="employee_id" value="{{ employee.0 }}">
+                        </tr>
+                    </tbody>
 
-            <div style="display: flex;">
-                <div>
-                        <button type="submit" name="edit" class="btn btn-primary" id="edit-submit-button" >Edit Details</button>
+                </table>
+                <br>
+                <form action="/editEmployee.html" method="post" oninput="toggleSubmitButton('edit')">
+                    {% csrf_token %}
+                    {{ error_message }}
+
+                    <!-- Add a hidden input field to store the employee ID -->
+                    <input type="hidden" id="edit-employee-id" name="employee_id" value="{{ employee.0 }}">
+
+                    <div style="display: flex;">
+                        <div>
+                            <button type="submit" name="edit" class="btn btn-primary" id="edit-submit-button">Edit
+                                Details</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+            <div class="attendance">
+                <h1 class="mt-5">Attendance Details</h1>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Punch-In Time</th>
+                                <th>Punch-Out Time</th>
+                                <th>Is Late</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in attendance_data %}
+                            <tr>
+                                <td>{{ entry.Start_Time }}</td>
+                                <td>{{ entry.Start_Time }}</td>
+                                <td>{% if entry.End_Time %}{{ entry.End_Time }}{% else %}Missed{% endif %}</td>
+                                <td>{{ entry.islate }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
-    </div>
+
+            <!-- ... (existing code) ... -->
+        </div>
 </body>
 
 </html>

@@ -402,6 +402,19 @@ DATABASES = {
     }
 }
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'if0_35410099_hackathon',
+#         'USER': 'if0_35410099',
+#         'PASSWORD': 'IZMkA8xEw8',
+#         'HOST': 'infinityfree.com',
+#         'PORT': '3306',
+#     }
+# }
+
+
 AUTH_USER_MODEL = 'user_panel.CustomUser'
 
 

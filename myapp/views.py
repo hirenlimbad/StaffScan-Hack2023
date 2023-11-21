@@ -212,24 +212,42 @@ def view_employee(request, employee_id):
     except KeyError:
         return redirect('login-page')
 
-    cursor = conn.cursor()
-    cursor.execute("SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s", (employee_id,))
-    employee = cursor.fetchone()
+    # Fetch employee details
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s",
+            (employee_id,))
+        employee = cursor.fetchone()
 
-    if employee:
         # Convert the faceImage blob to base64 encoding for displaying in HTML
-        if employee[8]:
+        if employee and employee[8]:
             employee_image_base64 = base64.b64encode(employee[8]).decode('utf-8')
             employee = employee[:8] + (employee_image_base64,)
         else:
             employee = employee[:8] + (None,)
 
-        # Employee found, pass the data to the template for rendering
-        return render(request, 'view_employee.html', {'employee': employee})
-    else:
-        return HttpResponse("Employee not found")
+        # Fetch employee attendance data
+        cursor.execute(
+            "SELECT AttendanceID, Start_Time, End_Time, leave_start, leave_end, islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s",
+            (employee_id,))
+        rows = cursor.fetchall()
 
-
+        # Convert tuples to dictionaries and format datetime objects
+        attendance_data = []
+        for row in rows:
+            entry = {
+                'AttendanceID': row[0],
+                'Date': datetime.strftime(row[1], '%Y-%m-%d') if row[1] else None,
+                'Start_Time': datetime.strftime(row[1], '%Y-%m-%d %H:%M:%S') if row[1] else None,
+                'End_Time': datetime.strftime(row[2], '%Y-%m-%d %H:%M:%S') if row[2] else None,
+                'leave_start': row[3],
+                'leave_end': row[4],
+                'islate': row[5]
+            }
+            attendance_data.append(entry)
+        print(attendance_data)
+    # Pass the data to the template for rendering
+    return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data})
 
 
 def assign_task(request, employee_id, employee_name):

@@ -1,108 +1,70 @@
-i am developing an employee management system, in that it has feature like punch in punch out, i integrated new features and punch in punch out not working properly, i have backup for old code
+brainstorm
+in employee attendance system i have one table structure where it shows employee start time and end time.instead i want a calendar with all days. if employee present than it calendar will show different color for that day.
 
-working punch code
-def employee_dashboard(request):
-    current_date = date.today()
-    employee_id = request.session.get('employee_id')
+here is my relavent code
+def view_employee(request, employee_id):
+    try:
+        admin_id = request.session['admin_id']
+    except KeyError:
+        return redirect('login-page')
 
-    leave_request_status_ref = db.reference(f'leave_requests/{employee_id}/status')
-    leave_request_status = leave_request_status_ref.get()
-
-    assigned_tasks_ref = db.reference(f'tasks/{employee_id}')
-    assigned_tasks = assigned_tasks_ref.get()
-    leave_requests_ref = db.reference(f'leave_requests/{employee_id}')
-    leave_requests = leave_requests_ref.get()
-
-    # Ensure the assigned tasks exist and convert them to a list
-    if assigned_tasks is not None:
-        assigned_tasks = list(assigned_tasks.values())
-    else:
-        assigned_tasks = []
-
-    # Initialize other variables with default values
-    punch_in_count = 0
-    punch_out_count = 0
-    employee_name = ""
-
+    # Fetch employee details
     with connection.cursor() as cursor:
-        # Check if the employee has punched in on the current date
-        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(Start_Time) = %s", (employee_id, current_date))
-        result = cursor.fetchone()
-        if result:
-            punch_in_count = result[0]
+        cursor.execute(
+            "SELECT EmployeeID, Name, MobileNumber, EmailID, password, education, position, salary, faceImage FROM Employee WHERE EmployeeID = %s",
+            (employee_id,))
+        employee = cursor.fetchone()
 
-        # Check if the employee has punched out on the current date
-        cursor.execute("SELECT COUNT(*) FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s AND DATE(End_Time) = %s", (employee_id, current_date))
-        result = cursor.fetchone()
-        if result:
-            punch_out_count = result[0]
+        # Convert the faceImage blob to base64 encoding for displaying in HTML
+        if employee and employee[8]:
+            employee_image_base64 = base64.b64encode(employee[8]).decode('utf-8')
+            employee = employee[:8] + (employee_image_base64,)
+        else:
+            employee = employee[:8] + (None,)
 
-        cursor.execute("SELECT Name FROM Employee WHERE EmployeeID = %s", (employee_id,))
-        result = cursor.fetchone()
-        if result:
-            employee_name = result[0]
+        # Fetch employee attendance data
+        cursor.execute(
+            "SELECT AttendanceID, Start_Time, End_Time, leave_start, leave_end, islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s",
+            (employee_id,))
+        rows = cursor.fetchall()
 
-
-        cursor.execute("SELECT admin_id FROM Employee WHERE EmployeeID = %s", (employee_id,))
-        admin_id = cursor.fetchone()[0]
-        task_id = date.today().strftime('%Y%m%d%H%M%S')
-    return render(request, 'user_panel_template/employee_dashboard.html', {
-        'punch_in_count': punch_in_count,
-        'punch_out_count': punch_out_count,
-        'assigned_tasks': assigned_tasks,
-        'employee_name': employee_name,
-        'leave_request_status': leave_request_status,
-        'leave_requests': leave_requests,
-        'admin_id': admin_id,
-        'current_date': date.today(),  # Include current_date in the context
-        'task_id': task_id,  # Include the generated task_id in the context
-    })
-
-
-
-after updated and its not working.
-
-def employee_dashboard(request):
-    admin_id = request.session.get('admin_id')
-    current_date = date.today()
-    employee_id = request.session.get('employee_id')
-
-    # Retrieve assigned tasks from Firebase for the current employee
-    leave_request_status_ref = db.reference(f'leave_requests/{employee_id}/status')
-    leave_request_status = leave_request_status_ref.get()
-
-    # assigned task
-    assigned_tasks_ref = db.reference(f'tasks/{employee_id}')
-    assigned_tasks_data = assigned_tasks_ref.get()
-
-    # Convert the tasks data to a list with task ID included
-    assigned_tasks = []
-    if assigned_tasks_data is not None:
-        for task_id, task_data in assigned_tasks_data.items():
-            task_data['task_id'] = task_id
-            assigned_tasks.append(task_data)
-    # end assigned task
-
-    # Initialize other variables with default values
-    punch_in_count = 0
-    punch_out_count = 0
-    employee_name = ""
-
-    leave_requests_ref = db.reference(f'leave_requests/{employee_id}')
-    leave_requests = leave_requests_ref.get()
-
-    # Your existing code for getting punch counts, employee name, etc.
-
-    return render(request, 'user_panel_template/employee_dashboard.html', {
-        'punch_in_count': punch_in_count,
-        'punch_out_count': punch_out_count,
-        'assigned_tasks': assigned_tasks,
-        'employee_name': employee_name,
-        'leave_request_status': leave_request_status,
-        'leave_requests': leave_requests,
-        'admin_id': admin_id,
-        'current_date': date.today(),
-    })
+        # Convert tuples to dictionaries and format datetime objects
+        attendance_data = []
+        for row in rows:
+            entry = {
+                'AttendanceID': row[0],
+                'Start_Time': datetime.strftime(row[1], '%Y-%m-%d %H:%M:%S') if row[1] else None,
+                'End_Time': datetime.strftime(row[2], '%Y-%m-%d %H:%M:%S') if row[2] else None,
+                'leave_start': row[3],
+                'leave_end': row[4],
+                'islate': row[5]
+            }
+            attendance_data.append(entry)
+        print(attendance_data)
+    # Pass the data to the template for rendering
+    return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data})
 
 
-brainstorm and merge this
+template code
+ <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Punch-In Time</th>
+                        <th>Punch-Out Time</th>
+                        <th>Is Late</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in attendance_data %}
+                        <tr>
+                            <td>{{ entry.Start_Time }}</td>
+                            <td>{{ entry.Start_Time }}</td>
+                            <td>{% if entry.End_Time %}{{ entry.End_Time }}{% else %}Missed{% endif %}</td>
+                            <td>{{ entry.islate }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>

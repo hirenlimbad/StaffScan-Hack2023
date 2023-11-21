@@ -34,7 +34,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 
-def admin_login(request):
+def admin_login(request):    
     if request.method == 'POST':
         form = EmployeeLoginForm(request.POST)
         if form.is_valid():
@@ -45,7 +45,6 @@ def admin_login(request):
             cursor = conn.cursor()
             cursor.execute(query, (email, password))
             user = cursor.fetchone()
-
 
             if user:
                 employee_id = user[0]
@@ -79,6 +78,11 @@ def get_consecutive_on_time_days(employee_id, current_date):
     return consecutive_on_time_days
 
 def punch(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
+
     employee_id = request.session.get('employee_id')
     current_time = timezone.now()
     current_date = date.today()
@@ -122,6 +126,11 @@ def punch(request):
     return redirect('employee_dashboard')
 
 def employee_dashboard(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
+
     admin_id = request.session.get('admin_id')
     current_date = date.today()
     employee_id = request.session.get('employee_id')
@@ -183,6 +192,11 @@ def employee_dashboard(request):
 
 
 def mark_task_completed(request, employee_id, task_id):
+
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
     print("Marking task as completed")  
 
     # Update the status of the task to 'completed' in Firebase
@@ -217,6 +231,10 @@ def mark_task_completed(request, employee_id, task_id):
 #         return JsonResponse({'status': 'already_completed'})
 
 def edit_employee_data(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
     if request.method == 'POST':
         try:
             # Get the data from the form
@@ -252,6 +270,7 @@ def edit_employee_data(request):
 
 
 def get_existing_employee_data(employee_id):
+    
     try:
         cursor = conn.cursor()
         # Retrieve the existing employee data based on the employee ID
@@ -267,6 +286,11 @@ def get_existing_employee_data(employee_id):
 
 @csrf_exempt
 def leave_request(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
+
     remaining_leave = -1
 
     if request.method == 'POST':
@@ -314,6 +338,11 @@ def leave_request(request):
 
 
 def download_attendance(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
+
     # Get the employee ID from the session
     employee_id = request.session.get('employee_id')
 
