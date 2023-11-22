@@ -10,11 +10,15 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Smooch+Sans:wght@0900&display=swap" rel="stylesheet">
 
     <style>
         * {
             font-family: josefin sans;
             font-size: 16px;
+            font-family: 'Smooch Sans', sans-serif;
         }
 
         .navbar {
@@ -104,8 +108,8 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li id="addEmployee"><a href="/addEmployee.html">Add Employee</a></li>
                         <li id="showEmployee"><a href="/showEmployee.html">Employee List</a></li>
+                        <li id="addEmployee"><a href="/addEmployee.html">Add Employee</a></li>
                         <li id="showTasks"><a href="/showTasks.html">Show assigned Tasks</a></li>
                         <li id="assignLeave"><a href="/assign_leave">Leave Requests</a></li>
                         <li id="lateEmployee"><a href="/late_employee">Show Late Employees</a></li>

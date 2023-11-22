@@ -1,0 +1,115 @@
+
+{% extends "user_panel_template/navbar.html" %}
+{% block title %}Details{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your details </title>
+
+    <style>
+        
+
+        th,
+        td {
+            background-color: transparent !important;
+            color: black;
+            text-align: left;
+            margin: 10px;
+            font-size: 20px;
+        }
+
+        .container {
+            border-radius: 10px !important;
+        }
+
+        .parent_class {
+            display: flex;
+            align-content: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="emp_details">
+        <div class="container">
+
+            <table class="view_table mt-4">
+                <tbody>
+                    <tr>
+                        <th scope="row">Unique ID</th>
+                        <td>{{ employee.0 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Name</th>
+                        <td>{{ employee.1 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Mobile Number</th>
+                        <td>{{ employee.2 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Email ID</th>
+                        <td>{{ employee.3 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Education</th>
+                        <td>{{ employee.5 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Position</th>
+                        <td>{{ employee.6 }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Salary</th>
+                        <td>{{ employee.7 }}</td>
+                    </tr>
+                    <th scope="row">Penulty</th>
+                    <td>{{ penualty }}</td>
+                    <tr>
+
+                    </tr>
+
+                    <tr>
+                        <th scope="row"> Image</th>
+                        <td>
+                            {% if employee.8 %}
+                            <img src="data:image/png;base64,{{ employee.8 }}" alt="Employee Image"
+                                style="max-width: 200px; max-height: 200px;">
+                            {% else %}
+                            No Image Available
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <!-- big image -->
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="https://www.timecamp.com/blog/wp-content/uploads/2022/05/Rescutime-alternatives-1-1.jpg" alt="Employee Image"
+                    style="max-width: 500px; max-height: 500px;">
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+    <div>
+
+        
+
+    
+</body>
+</html>
+    
+{% endblock body %}

@@ -84,52 +84,52 @@
     <script>
         // Define the markTaskCompleted function
         function markTaskCompleted(employeeId, taskId) {
-    console.log('Clicked Mark as Completed button');
-    console.log('Employee ID:', employeeId);
-    console.log('Task ID:', taskId);
+            console.log('Clicked Mark as Completed button');
+            console.log('Employee ID:', employeeId);
+            console.log('Task ID:', taskId);
 
-    // Get the CSRF token from the cookie
-    var csrfToken = getCookie('csrftoken');
+            // Get the CSRF token from the cookie
+            var csrfToken = getCookie('csrftoken');
 
-    // Update the URL based on your URL pattern for marking tasks completed
-    var markTaskURL = `/mark_task_completed/${employeeId}/${taskId}/`;
+            // Update the URL based on your URL pattern for marking tasks completed
+            var markTaskURL = `/mark_task_completed/${employeeId}/${taskId}/`;
 
-    // Send an AJAX request to mark the task as completed
-    $.ajax({
-        url: markTaskURL,
-        type: 'POST',
-        data: {
-            'employee_id': employeeId,
-            'task_id': taskId,
-            'csrfmiddlewaretoken': csrfToken  // Include the CSRF token in the data
-        },
-        dataType: 'json',
-        success: function (response) {
-            console.log('AJAX request successful');
-            if (response.status === 'success') {
-                // Update the UI, change the task status and display a message
-                var taskElement = $(`#task_${taskId}`);
-                taskElement.find('.task-status').text('Completed');
-                taskElement.find('.mark-as-completed-btn').remove(); // Remove the button
+            // Send an AJAX request to mark the task as completed
+            $.ajax({
+                url: markTaskURL,
+                type: 'POST',
+                data: {
+                    'employee_id': employeeId,
+                    'task_id': taskId,
+                    'csrfmiddlewaretoken': csrfToken  // Include the CSRF token in the data
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log('AJAX request successful');
+                    if (response.status === 'success') {
+                        // Update the UI, change the task status and display a message
+                        var taskElement = $(`#task_${taskId}`);
+                        taskElement.find('.task-status').text('Completed');
+                        taskElement.find('.mark-as-completed-btn').remove(); // Remove the button
 
-                // You can also add a message element
-                taskElement.append('<p class="text-success">Task completed successfully!</p>');
-            } else {
-                console.error('Failed to mark task as completed.');
-            }
-        },
-        error: function () {
-            console.error('Failed to send request.');
+                        // You can also add a message element
+                        taskElement.append('<p class="text-success">Task completed successfully!</p>');
+                    } else {
+                        console.error('Failed to mark task as completed.');
+                    }
+                },
+                error: function () {
+                    console.error('Failed to send request.');
+                }
+            });
         }
-    });
-}
 
-// Function to get CSRF token from cookie
-function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length === 2) return parts.pop().split(";").shift();
-}
+        // Function to get CSRF token from cookie
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
     </script>
 
     <!-- Rest of your HTML code -->

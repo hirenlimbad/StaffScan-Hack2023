@@ -26,6 +26,7 @@ from django.views.decorators.csrf import csrf_exempt
 import csv
 from django.db import connection as conn
 from datetime import timedelta, datetime, date
+import base64
 
 # Initialize Firebase credentials (you've already provided this)
 cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -219,27 +220,6 @@ def mark_task_completed(request, employee_id, task_id):
 
 
 
-# def mark_task_completed(request, employee_id, task_id):
-#     print("Marking task as completed")  
-
-#     # Check if the task is already marked as completed in Firebase
-#     task_status_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
-#     task_status = task_status_ref.get()
-
-#     if task_status != 'completed':
-#         # Update the status of the task to 'completed' in Firebase
-#         task_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/status')
-#         task_ref.set('completed')
-
-#         # Update the completed message for the task
-#         task_completed_message_ref = db.reference(f'tasks/{employee_id}/{date.today()}/{task_id}/completed_message')
-#         task_completed_message_ref.set('Task completed successfully!')
-
-#         return JsonResponse({'status': 'success'})
-#     else:
-#         # Task is already completed, no need to update again
-#         return JsonResponse({'status': 'already_completed'})
-
 def edit_employee_data(request):
     try:
         employee_id = request.session['employee_id']
@@ -280,7 +260,6 @@ def edit_employee_data(request):
 
 
 def get_existing_employee_data(employee_id):
-    
     try:
         cursor = conn.cursor()
         # Retrieve the existing employee data based on the employee ID
@@ -382,3 +361,26 @@ def download_attendance(request):
         csv_writer.writerow([start_time, end_time, leave_start, leave_end, status])
 
     return response
+
+def show_details(request):
+    try:
+        employee_id = request.session['employee_id']
+    except:
+        return redirect('employee_login')
+    
+    employee_id = request.session.get('employee_id')
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM Employee WHERE EmployeeID = %s", (employee_id,))
+        employee = cursor.fetchone()
+
+    penualty = employee[-1] 
+
+    # Convert the faceImage blob to base64 encoding for displaying in HTML
+    if employee and employee[8]:
+        employee_image_base64 = base64.b64encode(employee[8]).decode('utf-8')
+        employee = employee[:8] + (employee_image_base64,)
+    else:
+        employee = employee[:8] + (None,)
+
+    return render(request, 'user_panel_template/show_details.html', {'employee': employee, 'penualty': penualty})

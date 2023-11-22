@@ -4,46 +4,59 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 
     <style>
-
-        select, input{
+        select,
+        input {
             color: black;
         }
-        
     </style>
 </head>
+
 <body>
 
-    <h1>Employee Attendance System</h1>
+    <div class="container mt-5">
 
-    <!-- Form to set arrival time for different positions -->
-    <form method="POST" action="/set-timings/">
-        {% csrf_token %}
-        <label for="position">Select Position:</label>
-        <select name="position" id="position">
-            <option value="senior_developer">Senior Developer</option>
-            <option value="junior_developer">Junior Developer</option>
-            <option value="manager">Manager</option>
-        </select>
-        <label for="arrival_time">Set Arrival Time:</label>
-        <input type="time" name="arrival_time" id="arrival_time" required>
-        <button type="submit" class="btn btn-success">Set Timings</button>
-    </form>
+        <!-- Form to set arrival time for different positions -->
+        <form method="POST" action="/set-timings/">
+            {% csrf_token %}
+            <label for="position" class="h4">Select Position:</label>
+            <select name="position" id="position">
+                <option value="senior_developer">Senior Developer</option>
+                <option value="junior_developer">Junior Developer</option>
+                <option value="manager">Manager</option>
+            </select>
+            <label for="arrival_time" class="h4">Set Arrival Time:</label>
+            <input type="time" name="arrival_time" id="arrival_time" required>
+            <button type="submit" class="btn btn-success">Set Timings</button>
+        </form>
 
-    <!-- Display current timings for different positions -->
-    <h2>Current Timings:</h2>
-    <ul>
-        {% for position, timing in timings.items %}
-            <li>{{ position }}: {{ timing }}</li>
-        {% endfor %}
-    </ul>
-    
+        <!-- Display current timings for different positions -->
+        <h2>Current Timings:</h2>
+        <ul>
+            {% for position, timing in timings.items %}
+            <li class="h4">{{ position }}: {{ timing }}</li>
+            {% endfor %}
+        </ul>
+
+
+        <br>
+        <br>
+        <p class="text-danger">By clicking on "Set Timings," it will establish timings for all respective employees.</p>
+        <p class="text-danger">For example, if an employee is scheduled to start at 9:00 AM, they have until 10:00 AM to
+            punch in. After 10:00 AM, it will be considered late, so set timings accordingly.</p>
+
+    </div>
+
 </body>
+
 </html>
-    
+
 {% endblock body %}

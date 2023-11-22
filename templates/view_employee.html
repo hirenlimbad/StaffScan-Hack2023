@@ -9,28 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Details</title>
     <!-- Include Bootstrap CSS from a CDN -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 
     <style>
-        /* * {
+        * {
             color: black;
         }
 
-        .view_table {
-            border: solid rgb(85, 85, 185) 2px;
-            border-radius: 14px;
-        }
-
-        th,
-        td {
-            background-color: transparent !important;
-            color: black;
-            text-align: left;
-            margin: 10px;
-            font-size: 20px;
-        } */
-
-        .container {
+        #container {
             border-radius: 10px;
+            margin: 0% 30% 0% 10%;
         }
 
         .parent_class {
@@ -56,6 +44,33 @@
             overflow-x: auto;
         }
 
+        .table-container table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+
+        #attendanceForm {
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        #attendanceForm input {
+            margin: 4px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #attendanceForm button {
+            margin: 4px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #attendanceForm input[type="text"] {
+            width: 100px;
+        }
+
         /* responsive ui code */
         @media screen and (max-width: 768px) {
             .parent_class {
@@ -70,6 +85,8 @@
                 width: 100%;
             }
         }
+
+        
     </style>
 </head>
 
@@ -78,7 +95,7 @@
     <div class="parent_class">
 
         <div class="emp_details">
-            <div class="container">
+            <div class="container" id="container">
                 <h1 class="mt-5">Employee Details</h1>
 
 
@@ -176,9 +193,8 @@
                 </table>
             </div>
 
-            <!-- ... (existing code) ... -->
 
-            <!-- Include jQuery library -->
+
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
             <!-- Your form -->
@@ -189,6 +205,10 @@
                 Year: <input type="text" name="year"><br>
                 <button type="submit">Download Attendance</button>
             </form>
+
+            <style>
+                /* code to design attendanceForm and its fields*/
+            </style>
 
 
 

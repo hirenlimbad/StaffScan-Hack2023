@@ -49,8 +49,7 @@ urlpatterns = [
     path('download_attendance', user_view.download_attendance, name='download_attendance'),
     path('mark_task_completed/<int:employee_id>/<int:task_id>/', user_view.mark_task_completed, name='mark_task_completed'),
     path('mark_task_completed/<str:employee_id>/<str:task_id>/', user_view.mark_task_completed, name='strmark_task_completed'),
-
-
+    path('show_details', user_view.show_details, name="emp_details")
 
 ]
 
