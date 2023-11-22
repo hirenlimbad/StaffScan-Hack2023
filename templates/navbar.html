@@ -18,7 +18,7 @@
         }
 
         .navbar {
-            background-color: #20222a;
+            background-color: white;
             border-color: transparent !important;
         }
 
@@ -31,76 +31,38 @@
             color: black !important;
         }
 
+        .navbar ul a{
+            color: black !important;
+        }
+    
+        .navbar-brand{
+            color: black !important;
+        }
+
         body {
-            --s: 50px;
-            --c: #191b22;
-            --_s: calc(2*var(--s)) calc(2*var(--s));
-            --_g: 35.36% 35.36% at;
-            --_c: #0000 66%, #20222a 68% 70%, #0000 72%;
-            background:
-                radial-gradient(var(--_g) 100% 25%, var(--_c)) var(--s) var(--s)/var(--_s),
-                radial-gradient(var(--_g) 0 75%, var(--_c)) var(--s) var(--s)/var(--_s),
-                radial-gradient(var(--_g) 100% 25%, var(--_c)) 0 0/var(--_s),
-                radial-gradient(var(--_g) 0 75%, var(--_c)) 0 0/var(--_s),
-                repeating-conic-gradient(var(--c) 0 25%, #0000 0 50%) 0 0/var(--_s),
-                radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c) fixed !important;
-            background-attachment: fixed !important;
-            color: white;
+            background-color: white !important;
 
         }
 
-        .btn {
-            background-color: #20222a;
-        }
 
-        .btn:hover {
-            background-color: #31395b;
-        }
-
-        .table {
-            border-radius: 5px;
-            color: white !important;
-            overflow-y: scroll;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: right;
-            margin: 60px;
-            overflow: auto;
-            max-height: 100px;
-        }
-
-
-
-        th {
-            background-color: #007BFF !important;
+        th{
+            background-color: #8bd0ec;
             color: black;
         }
 
-        tr {
-            margin-bottom: 20px !important;
-            color: black;
-            background-color: #2d5395b0 !important;
+        td, th{
+            border: 1px solid black;
         }
 
-        .table-responsive {
-            border-radius: 7px;
+        th{
+            border-bottom: 2px solid black !important;
         }
 
         table{
-            margin-top: 10px;
-            max-width: 900px !important;
+            border: 2px solid black;
+            border-radius: 4px !important; 
         }
-
-        a{
-            color: black;
-        }
-
-        a:hover{
-            color: #191b22;
-        }
-
+        
     </style>
 </head>
 
@@ -138,6 +100,7 @@
         </nav>
     </div>
 
+    <br><br>
     <br><br>
 
 

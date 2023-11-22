@@ -2,7 +2,6 @@ from django.shortcuts import render, HttpResponse
 from .forms import EmployeeForm
 from .employeeManagement import employeeManagement
 from .employeeUpdateForm import EmployeeUpdateForm
-from .models import Frame
 from django.views.decorators import gzip
 from django.http import StreamingHttpResponse, JsonResponse
 from django.db import connection
@@ -25,7 +24,8 @@ from django.db import connection as conn
 from django.db import transaction
 import base64
 import uuid  
-
+import csv
+from io import StringIO
 # from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -236,7 +236,7 @@ def view_employee(request, employee_id):
 
         # Fetch employee attendance data
         cursor.execute(
-            "SELECT AttendanceID, Start_Time, End_Time, leave_start, leave_end, islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s",
+            "SELECT AttendanceID, Start_Time, End_Time, leave_start, leave_end, islate FROM EMPLOYEE_ATTENDANCE WHERE EmployeeID = %s order by Start_Time LIMIT 10",
             (employee_id,))
         rows = cursor.fetchall()
 
@@ -555,3 +555,36 @@ def setTimings(request):
         timings = {row[0]: row[1] for row in rows}
 
     return render(request, 'setTimings.html', {'timings': timings})
+
+
+
+def download_attendance(request):
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee_id')
+        month = request.POST.get('month')
+        year = request.POST.get('year')
+        # Fetch data from MySQL
+        with connection.cursor() as cursor:
+            # sql query to fetch attendance from the database
+            query = """
+                SELECT Start_Time, End_Time, leave_start, leave_end, islate
+                FROM EMPLOYEE_ATTENDANCE
+                WHERE EmployeeID = %s
+                AND (YEAR(Start_Time) = %s AND MONTH(Start_Time) = %s)
+            """
+            cursor.execute(query, (employee_id, year, month))
+            attendance_data = cursor.fetchall()
+
+
+        # Create a CSV string
+        csv_data = StringIO()
+        csv_writer = csv.writer(csv_data)
+        csv_writer.writerow(['Start Time', 'End Time', 'Leave Start', 'Leave End', 'Is Late'])
+        csv_writer.writerows(attendance_data)
+
+        # Prepare response
+        response = HttpResponse(csv_data.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=attendance_data.csv'
+        return response
+    else:
+        return JsonResponse({'error': 'Invalid request method'})

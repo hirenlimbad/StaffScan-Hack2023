@@ -1,38 +1,34 @@
-from django.db import models
-from django.shortcuts import render, HttpResponse
+# models.py
+
 from django.db import models
 
 class Employee(models.Model):
-    name = models.CharField(max_length=255)
-    mobile_number = models.CharField(max_length=15)
-    email = models.EmailField()
-    employee_image = models.ImageField(upload_to='employee_images/')
+    EmployeeID = models.AutoField(primary_key=True)
+    Name = models.CharField(max_length=255)
+    MobileNumber = models.CharField(max_length=15, null=True, blank=True)
+    EmailID = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
+    education = models.CharField(max_length=25, null=True, blank=True)
+    position = models.CharField(max_length=25, null=True, blank=True)
+    salary = models.BigIntegerField(null=True, blank=True)
+    faceImage = models.BinaryField(null=True, blank=True)
+    remaining_leave = models.IntegerField(default=0)
+    late_days = models.IntegerField(null=True, blank=True)
+    admin_id = models.IntegerField(null=True, blank=True)
+    arrival_time = models.TimeField(null=True, blank=True)
+    penalty = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    class Meta:
-        app_label = 'myapp'
+    def __str__(self):
+        return self.Name
 
-class Frame(models.Model):
-    frame_data = models.BinaryField()
+class EmployeeAttendance(models.Model):
+    AttendanceID = models.AutoField(primary_key=True)
+    EmployeeID = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    Start_Time = models.DateTimeField(null=True, blank=True)
+    End_Time = models.DateTimeField(null=True, blank=True)
+    leave_start = models.DateTimeField(null=True, blank=True)
+    leave_end = models.DateTimeField(null=True, blank=True)
+    islate = models.BooleanField(null=True, blank=True)
 
-    class Meta:
-        app_label = 'myapp'
-
-def some_other_view(request):
-    frames = Frame.objects.all()  # Retrieve all frames
-    # Process frames as needed
-    print("works")
-    return render(request, 'cameraSetup.html', {'frames': frames})
-
-    class Meta:
-        app_label = 'myapp'
-
-
-
-class VideoFrame(models.Model):
-    frame = models.ImageField(upload_to='video_frames/')
-
-    class Meta:
-        app_label = 'myapp'
-
-
-from django.db import models
+    def __str__(self):
+        return f"Attendance ID: {self.AttendanceID}, Employee: {self.EmployeeID}, Start Time: {self.Start_Time}, End Time: {self.End_Time}, Is Late: {self.islate}"

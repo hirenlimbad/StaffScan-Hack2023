@@ -33,6 +33,8 @@ urlpatterns = [
     path('set_timings.html', views.setTimings, name="SetTimings"),
     path('set-timings/', views.setTimings, name='set_timings'),
     path('dismiss_task/<str:employee_id>/<str:deadline>/<str:task_id>/', views.dismiss_task, name='dismiss_task'),
+    path('download_attendance/', views.download_attendance, name='download_attendance'),
+
 
 
 

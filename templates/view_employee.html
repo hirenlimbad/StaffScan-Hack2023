@@ -11,8 +11,8 @@
     <!-- Include Bootstrap CSS from a CDN -->
 
     <style>
-        * {
-            color: white;
+        /* * {
+            color: black;
         }
 
         .view_table {
@@ -27,13 +27,13 @@
             text-align: left;
             margin: 10px;
             font-size: 20px;
-        }
+        } */
 
         .container {
             border-radius: 10px;
         }
 
-        .parent_class{
+        .parent_class {
             display: flex;
             align-content: center;
         }
@@ -58,9 +58,10 @@
 
         /* responsive ui code */
         @media screen and (max-width: 768px) {
-            .parent_class{
+            .parent_class {
                 display: block;
             }
+
             .emp_details {
                 width: 100%;
             }
@@ -69,7 +70,7 @@
                 width: 100%;
             }
         }
-</style>
+    </style>
 </head>
 
 <body>
@@ -111,10 +112,10 @@
                             <th scope="row">Salary</th>
                             <td>{{ employee.7 }}</td>
                         </tr>
-                            <th scope="row">Penulty</th>
-                            <td>{{ penualty }}</td>
+                        <th scope="row">Penulty</th>
+                        <td>{{ penualty }}</td>
                         <tr>
-                            
+
                         </tr>
 
                         <tr>
@@ -150,34 +151,81 @@
 
             </div>
         </div>
-            <div class="attendance">
-                <h1 class="mt-5">Attendance Details</h1>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Punch-In Time</th>
-                                <th>Punch-Out Time</th>
-                                <th>Is Late</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for entry in attendance_data %}
-                            <tr>
-                                <td>{{ entry.Start_Time }}</td>
-                                <td>{{ entry.Start_Time }}</td>
-                                <td>{% if entry.End_Time %}{{ entry.End_Time }}{% else %}Missed{% endif %}</td>
-                                <td>{{ entry.islate }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        <div class="attendance">
+            <h1 class="mt-5">Attendance Details</h1>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Punch-In Time</th>
+                            <th>Punch-Out Time</th>
+                            <th>Is Late</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in attendance_data %}
+                        <tr>
+                            <td>{{ entry.Start_Time }}</td>
+                            <td>{{ entry.Start_Time }}</td>
+                            <td>{% if entry.End_Time %}{{ entry.End_Time }}{% else %}Missed{% endif %}</td>
+                            <td>{{ entry.islate }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
             <!-- ... (existing code) ... -->
-        </div>
+
+            <!-- Include jQuery library -->
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+            <!-- Your form -->
+            <form id="attendanceForm" action="/download_attendance/" method="post">
+                {% csrf_token %}
+                Employee ID: <input type="text" name="employee_id"><br>
+                Month: <input type="text" name="month"><br>
+                Year: <input type="text" name="year"><br>
+                <button type="submit">Download Attendance</button>
+            </form>
+
+
+
+            <!-- Script for AJAX request -->
+            <script>
+
+                // code to prefill the form with the current month and year and Employee id 
+                var today = new Date();
+                var month = today.getMonth() + 1;
+                var year = today.getFullYear();
+                $('input[name="month"]').val(month);
+                $('input[name="year"]').val(year);
+                $('input[name="employee_id"]').val({{ employee.0 }});
+
+
+
+                $(document).ready(function () {
+                    $('#downloadButton').on('click', function () {
+                        var formData = $('#attendanceForm').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/download_attendance/',
+                            data: formData,
+                            headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+                            success: function (data) {
+                                // Handle the response, e.g., show a success message or redirect
+                                console.log(data);
+                            },
+                            error: function (error) {
+                                // Handle errors
+                                console.log(error);
+                            }
+                        });
+                    });
+                });
+            </script>
+
 </body>
 
 </html>

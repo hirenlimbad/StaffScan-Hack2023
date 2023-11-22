@@ -4,8 +4,8 @@ from django import forms
 from django import forms
 
 POSITION_CHOICES = [
-    ('senior_developer', 'Senior Manager'),
-    ('junior_developer', 'Junior Manager'),
+    ('senior_developer', 'Senior Developer'),
+    ('junior_developer', 'Junior Developer'),
     ('manager', 'Manager'),
 ]
 class EmployeeForm(forms.Form):
