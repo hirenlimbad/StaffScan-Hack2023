@@ -11,6 +11,7 @@ from user_panel import views as user_view
 urlpatterns = [
     path('', views.login_view, name='login-page'),
     path('index.html', views.index, name='index'),
+    path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('addEmployee.html', views.add_employee, name= "add emoloyee"),
     path('showEmployee.html', views.employee_list, name= "show emoloyee"),
     path('get-latest-employee-data/', views.get_latest_employee_data, name='get_latest_employee_data'),

@@ -1,0 +1,77 @@
+<!-- your_template_name.html -->
+{% extends "navbar.html" %}
+{% block title %}Admin Dashboard{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* flexbox for charts */
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .chart {
+            width: 45%;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="chart-container">
+            
+
+            <div class="chart">
+                <div class="container" style="height: 500%; width: 100%; min-height: 200%;">
+                    <h2 style="color: rgb(7, 7, 58); font-weight: bold;">Current Timings </h2>
+                    <ul>
+                        {% for position, timing in timings.items %}
+                        <li class="h4" style="color: rgb(29, 29, 94);">{{ position }}: {{ timing }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="chart" id="education-chart"  style="min-height: 400px;"></div>
+            <div class="chart" id="plotly-graph"></div>
+            <div class="chart" id="arrival-chart"></div>
+        </div>
+
+        <script>
+            // Insert the Plotly graph using JavaScript
+            var graph_data = {{ graph_data| safe }};
+            Plotly.newPlot('plotly-graph', graph_data);
+
+            var education_data = {{ education_data| safe }};
+            Plotly.newPlot('education-chart', education_data);
+
+            var arrival_data = {{ arrival_data| safe }};
+            Plotly.newPlot('arrival-chart', arrival_data);
+
+            // script to change the h4 class text, underscore to space and capitalize first letter
+            var h4 = document.getElementsByClassName('h4');
+            for (var i = 0; i < h4.length; i++) {
+                var text = h4[i].textContent;
+                var text = text.replace(/_/g, ' ');
+                var text = text.charAt(0).toUpperCase() + text.slice(1);
+                h4[i].textContent = text;
+            }
+        </script>
+    </div>
+
+</body>
+
+</html>
+{% endblock body %}

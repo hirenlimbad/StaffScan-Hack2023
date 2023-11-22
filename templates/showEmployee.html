@@ -9,6 +9,10 @@
 
     <style>
 
+        table a{
+            text-decoration: underline;
+        }
+
         #filter{
             background-color: #8bd0ec;
             color: black;
@@ -28,6 +32,14 @@
         .filter-container select {
             padding: 8px;
             border-radius: 5px;
+        }
+
+        #delete-submit-button{
+            margin: -5px 10px 10px 30px;
+        }
+
+        #delete-submit-button:disabled:hover{
+            margin: -5px 10px 10px 130px;
         }
 
 
@@ -57,7 +69,7 @@
                 <div>
 
                     <button type="submit" name="delete" class="btn btn-danger" id="delete-submit-button"
-                        style="margin: -5px 10px 10px 30px;" disabled>Delete</button>
+                         disabled>Delete</button>
                 </div>
             </div>
         </form>

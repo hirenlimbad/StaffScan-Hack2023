@@ -26,6 +26,9 @@ import base64
 import uuid  
 import csv
 from io import StringIO
+import pandas as pd
+import plotly.express as px
+
 # from .AttendanceMechanism import AttendanceMechanism
 
 # cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -44,17 +47,89 @@ def login_view(request):
         user = employeeManagement().checkCredentials(username, password)
         if (user) != None:
             request.session['admin_id'] = user
-            employees = employeeManagement().showAllEmployees(user)
-            isPresent = employeeManagement().isPresent()
-            currunt_time = datetime.now()
-            return render(request, 'showEmployee.html', {'employees': employees,
-                                                         'isPresent': isPresent,
-                                                         'current_time': currunt_time})
+            return redirect('admin_dashboard')
 
         text = {"error_message": "Sorry! incorrect user name or password."}
         return render(request, 'LoginPage.html', text)
     else:
         return render(request, 'LoginPage.html')
+
+import plotly
+def admin_dashboard(request):
+    try:
+        admin_id = request.session['admin_id']
+    except:
+        return redirect('login-page')
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT DATE(Start_Time) as Date, COUNT(EmployeeID) as PresentCount
+                FROM EMPLOYEE_ATTENDANCE
+                WHERE Start_Time >= NOW() - INTERVAL 1 WEEK
+                GROUP BY Date
+                ORDER BY Date
+            """)
+            result = cursor.fetchall()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT education, COUNT(*) as count
+                FROM Employee
+                GROUP BY education
+            """)
+            education_result = cursor.fetchall()
+
+            # Arrival Time Analysis
+            cursor.execute("""
+                SELECT arrival_time, COUNT(*) as count
+                FROM Employee
+                WHERE arrival_time IS NOT NULL
+                GROUP BY arrival_time
+            """)
+            arrival_result = cursor.fetchall()
+
+        # Convert results to DataFrames
+        education_df = pd.DataFrame(education_result, columns=['Education', 'Count'])
+        arrival_df = pd.DataFrame(arrival_result, columns=['ArrivalTime', 'Count'])
+
+        # Education Level Pie Chart
+        education_fig = px.pie(education_df, names='Education', values='Count', title='Education Level Distribution')
+
+        # Arrival Time Analysis Chart
+        arrival_fig = px.bar(arrival_df, x='ArrivalTime', y='Count', title='Arrival Time Analysis')
+
+        # Convert figures to JSON
+        education_data = json.dumps(education_fig, cls=plotly.utils.PlotlyJSONEncoder)
+        arrival_data = json.dumps(arrival_fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        
+        df = pd.DataFrame(result, columns=['Date', 'PresentCount'])
+
+        # Create a Plotly figure
+        fig = px.line(df, x='Date', y='PresentCount', title='Employee Attendance in the Last 1 Week')
+
+        # Convert the Plotly figure to JSON
+        graph_data = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        print(graph_data)
+        
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT DISTINCT position, arrival_time FROM Employee WHERE arrival_time IS NOT NULL AND admin_id = %s", [admin_id])
+            rows = cursor.fetchall()
+            timings = {row[0]: row[1] for row in rows}
+
+        context = {
+            'education_data': education_data,
+            'arrival_data': arrival_data,
+            'graph_data': graph_data,
+            'timings' : timings
+        }
+    except Exception as e:
+        print(f"Error: {e}")
+        context = {}
+
+
+    return render(request, 'Admin_Dashboard.html', context)
+
 
 def add_employee(request):
 
