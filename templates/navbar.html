@@ -31,11 +31,11 @@
             color: black !important;
         }
 
-        .navbar ul a{
+        .navbar ul a {
             color: black !important;
         }
-    
-        .navbar-brand{
+
+        .navbar-brand {
             color: black !important;
         }
 
@@ -45,24 +45,43 @@
         }
 
 
-        th{
+        th {
             background-color: #8bd0ec;
             color: black;
         }
 
-        td, th{
+        td,
+        th {
             border: 1px solid black;
         }
 
-        th{
+        th {
             border-bottom: 2px solid black !important;
         }
 
-        table{
+        table {
             border: 2px solid black;
-            border-radius: 4px !important; 
+            border-radius: 4px !important;
         }
-        
+
+        /* resposive ui code */
+
+        /* used media tag for change the table border */
+
+        @media screen and (max-width: 600px) {
+            table {
+                border: 2px solid black;
+            }
+
+            td,
+            th {
+                border: 2px solid black !important;
+            }
+
+            th {
+                border-bottom: 2px solid black !important;
+            }
+        }
     </style>
 </head>
 
