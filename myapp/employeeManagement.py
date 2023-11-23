@@ -123,6 +123,7 @@ class employeeManagement:
                 salary = request.POST['salary']
                 position = request.POST['position']
                 education = request.POST['education']
+                photo = request.FILES.get('faceImage')
                 id = request.POST['id']
 
                 # Create a cursor
@@ -130,13 +131,18 @@ class employeeManagement:
 
                 # Define the SQL UPDATE statement
                 update_query = "UPDATE Employee SET name = %s, MobileNumber = %s, EmailID = %s, password = %s, salary = %s, position = %s, education = %s"
-                values = (name, mobile, email, password,salary, position, education)
 
                 if photo:
                     update_query += ", faceImage = %s"
-                    values = (name, mobile, email, photo.read())
+                    values = (name, mobile, email, password, salary, position, education, photo.read())
+                else:
+                    values = (name, mobile, email, password, salary, position, education)
 
-                update_query += " WHERE EmployeeID = " +id
+                update_query += " WHERE EmployeeID = %s"
+                values += (id,)
+
+                # Execute the UPDATE statement with the values
+                cursor.execute(update_query, values)
 
                 # Execute the UPDATE statement with the values
                 cursor.execute(update_query, values)

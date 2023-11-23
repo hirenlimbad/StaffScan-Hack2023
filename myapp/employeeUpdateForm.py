@@ -14,3 +14,4 @@ class EmployeeUpdateForm(forms.Form):
     education = forms.CharField(max_length=25, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     position = forms.ChoiceField(choices=POSITION_CHOICES, required=False, widget=forms.Select(attrs={'class': 'form-control'}))
     salary = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    faceImage = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))

@@ -17,36 +17,132 @@
         .chart-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
         }
 
         .chart {
             width: 45%;
             margin: 10px;
         }
+
+        .main_container {
+            display: flex;
+        }
+
+        .notification {
+            margin-top: -20px;
+        }
+
+        .notification a,
+        p {
+            color: rgb(29, 29, 94);
+        }
+
+        .notification p:first-child {
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .notification p:last-child {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .notification li {
+            margin-left: -10px;
+        }
+
+        .first {
+            width: 25%;
+        }
+
+        .second {
+            width: 25%;
+        }
+
+        .zero {
+            width: 50%;
+        }
+
+
+        /* additional code start */
+
+        .time {
+            font-size: 36px;
+            color: rgb(7, 7, 58) !important;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(30, 33, 78, 0.5);
+            transition: all 0.5s cubic-bezier(0.6, 0.2, 0.1, 2);
+        }
+
+        /* add code end */
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="containers mt-3">
 
-        <div class="chart-container">
-            
+        <div class="container" style="height: 500%; width: 100%; min-height: 200%;">
+            <div class="main_container">
 
-            <div class="chart">
-                <div class="container" style="height: 500%; width: 100%; min-height: 200%;">
-                    <h2 style="color: rgb(7, 7, 58); font-weight: bold;">Current Timings </h2>
+
+                <div class="zero">
+                    <!-- additional code -->
+
+                    <div class="container">
+                        <div class="clock">
+                            <div id="time" class="time"></div>
+                        </div>
+                    </div>
+                    <!-- additional code end -->
+                </div>
+
+
+
+                <div class="first">
+                    <a href="/set_timings.html" class="h2" style="color: rgb(7, 7, 58); font-weight: bold;">
+                        Current
+                        Timings </a>
                     <ul>
                         {% for position, timing in timings.items %}
                         <li class="h4" style="color: rgb(29, 29, 94);">{{ position }}: {{ timing }}</li>
                         {% endfor %}
                     </ul>
                 </div>
+
+                <div class="second">
+                    <div class="notification" style="border-radius: 5px; background-color: #f9f9f9;">
+                        <p class="h2" style="color: rgb(7, 7, 58); font-weight: bold;">Notifications </p>
+                        <ul>
+                            <li>
+                                <p id="completed_tasks">0</p>
+                                <a href="/showTasks.html">Tasks are completed </a>
+                            </li>
+                            <li>
+                                <p id="pending_tasks">0</p>
+                                <a href="/showTasks.html">Tasks are pending </a>
+                            </li>
+                            <li>
+                                <p id="leave_requests" class="int_value">0</p>
+                                <a href="/assign_leave"> New Leave Requests </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="chart" id="education-chart"  style="min-height: 400px;"></div>
-            <div class="chart" id="plotly-graph"></div>
-            <div class="chart" id="arrival-chart"></div>
+
+
+            <div class="chart-container">
+                <div class="chart">
+                    <div class="chart" id="arrival-chart" style="min-width: 600px;"></div>
+                </div>
+                <div class="chart" id="plotly-graph" style="min-height: 400px;"></div> <!-- Attendance Chart -->
+                <div class="chart" id="education-chart"></div>
+            </div>
+
+
+
         </div>
 
         <script>
@@ -69,6 +165,90 @@
                 h4[i].textContent = text;
             }
         </script>
+
+
+        <!-- ajax for notification from the django -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                // Function to fetch data
+                function fetchData() {
+                    $.ajax({
+                        url: '/notification',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            // Handle the retrieved data
+                            console.log(data);
+
+                            // Check if data has changed
+                            if ($('#completed_tasks').text() !== data.completed_tasks.toString()) {
+                                animateChange($('#completed_tasks'), data.completed_tasks);
+                                // send notification
+                                var notification = new Notification("Some Tasks are Completed", {
+                                    body: "Click to see the tasks",
+                                    icon: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                });
+                            }
+
+                            if ($('#pending_tasks').text() !== data.pending_tasks.toString()) {
+                                animateChange($('#pending_tasks'), data.pending_tasks);
+                            }
+
+                            if ($('#leave_requests').text() !== data.leave_request_count.toString()) {
+                                animateChange($('#leave_requests'), data.leave_request_count);
+                                // send notification
+                                var notification = new Notification("New Leave Requests", {
+                                    body: "New Leave Requests are available",
+                                    icon: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png" 
+                                });
+                            }
+                        },
+                        error: function (error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                }
+
+                // Function to animate changes
+                function animateChange(element, newValue) {
+                    // Add your desired animation here
+                    element.animate({ opacity: 0 }, 500, function () {
+                        element.text(newValue).animate({ opacity: 1 }, 100);
+                    });
+                }
+
+                // Fetch data initially
+                fetchData();
+
+                // Fetch data every 1 minute (60000 milliseconds)
+                setInterval(fetchData, 60000);
+            });
+        </script>
+
+        <script>
+            function updateClock() {
+                const date = new Date();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+
+                const timeElement = document.getElementById("time");
+                timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+
+            setInterval(updateClock, 1000);
+
+
+            Notification.requestPermission().then(function (result) {
+                console.log(result);
+            });
+
+        </script>
+
+
+
     </div>
 
 </body>

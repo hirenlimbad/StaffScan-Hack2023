@@ -81,10 +81,10 @@ def admin_dashboard(request):
 
             # Arrival Time Analysis
             cursor.execute("""
-                SELECT arrival_time, COUNT(*) as count
-                FROM Employee
-                WHERE arrival_time IS NOT NULL
-                GROUP BY arrival_time
+                SELECT DATE_FORMAT(Start_Time, '%H:%i') as Rounded_Time, COUNT(*) as count
+                FROM EMPLOYEE_ATTENDANCE
+                WHERE Start_Time IS NOT NULL
+                GROUP BY Rounded_Time
             """)
             arrival_result = cursor.fetchall()
 
@@ -96,7 +96,7 @@ def admin_dashboard(request):
         education_fig = px.pie(education_df, names='Education', values='Count', title='Education Level Distribution')
 
         # Arrival Time Analysis Chart
-        arrival_fig = px.bar(arrival_df, x='ArrivalTime', y='Count', title='Arrival Time Analysis')
+        arrival_fig = px.bar(arrival_df, x='Count', y='ArrivalTime', title='Arrival Time Analysis')
 
         # Convert figures to JSON
         education_data = json.dumps(education_fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -107,7 +107,6 @@ def admin_dashboard(request):
 
         # Create a Plotly figure
         fig = px.line(df, x='Date', y='PresentCount', title='Employee Attendance in the Last 1 Week')
-
         # Convert the Plotly figure to JSON
         graph_data = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         print(graph_data)
@@ -130,6 +129,44 @@ def admin_dashboard(request):
 
     return render(request, 'Admin_Dashboard.html', context)
 
+
+def notification(request):
+    try:
+        admin_id = request.session['admin_id']
+    except:
+        return redirect('login-page')
+    
+    tasks_ref = db.reference('tasks')
+    tasks = tasks_ref.get()
+    completed_tasks = 0
+    pending_tasks = 0
+    if tasks:
+        for employee_id, employee_tasks in tasks.items():
+            if isinstance(employee_tasks, dict):
+                for date, task_details in employee_tasks.items():
+                    if isinstance(task_details, dict) and task_details.get('admin_id') == admin_id:
+                        task_details['task_id'] = date  # Assign the task ID here
+                        task_details['employee_id'] = employee_id
+                        if task_details['status'] == 'completed':
+                            completed_tasks += 1
+                        else:
+                            pending_tasks += 1
+
+    # Fetch leave requests from Firebase
+    leave_request_count = 0
+    leave_requests_ref = db.reference('leave_requests')
+    leave_requests = leave_requests_ref.order_by_child('admin_id').equal_to(admin_id).get()
+    if leave_requests:
+        for employee_id, leave_request in leave_requests.items():
+            if isinstance(leave_request, dict):
+                leave_request_count += 1    
+
+    context = {
+        'completed_tasks': completed_tasks,
+        'pending_tasks': pending_tasks,
+        'leave_request_count': leave_request_count
+    }
+    return JsonResponse(context)
 
 def add_employee(request):
 
@@ -209,10 +246,9 @@ def edit_employee(request):
                 'password': password,
                 'education': education,
                 'position': position,
-                'salary': salary
+                'salary': salary,
+                'faceImage': face_image
             }
-
-            print("password is: ", password)
 
             # Create the form instance with initial data
             form = EmployeeUpdateForm(initial=initial_data)
@@ -328,8 +364,7 @@ def view_employee(request, employee_id):
                 'islate': row[5]
             }
             attendance_data.append(entry)
-        print(attendance_data)
-    # Pass the data to the template for rendering
+            
     return render(request, 'view_employee.html', {'employee': employee, 'attendance_data': attendance_data, 'penualty': penualty})
 
 

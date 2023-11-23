@@ -1,0 +1,195 @@
+<!-- your_template_name.html -->
+{% extends "navbar.html" %}
+{% block title %}Admin Dashboard{% endblock title %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* flexbox for charts */
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .chart {
+            width: 45%;
+            margin: 10px;
+        }
+
+        .main_container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .notification {
+            margin-top: -20px;
+        }
+
+        .notification a,
+        p {
+            color: rgb(29, 29, 94);
+        }
+
+        .notification p:first-child {
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .notification p:last-child {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .notification li {
+            margin-left: -10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="containers mt-3">
+
+        <div class="chart-container">
+
+            
+
+            <div class="chart">
+                <div class="container" style="height: 500%; width: 100%; min-height: 200%;">
+
+                    <div class="main_container">
+
+                        <div class="first">
+                            <a href="/set_timings.html" class="h2" style="color: rgb(7, 7, 58); font-weight: bold;">
+                                Current
+                                Timings </a>
+                            <ul>
+                                {% for position, timing in timings.items %}
+                                <li class="h4" style="color: rgb(29, 29, 94);">{{ position }}: {{ timing }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div class="second">
+                            <div class="notification" style="border-radius: 5px; background-color: #f9f9f9;">
+                                <p class="h2" style="color: rgb(7, 7, 58); font-weight: bold;">Notifications </p>
+                                <ul>
+                                    <li>
+                                        <p id="completed_tasks">0</p>
+                                        <a href="/showTasks.html">Tasks are completed </a>
+                                    </li>
+                                    <li>
+                                        <p id="pending_tasks">0</p>
+                                        <a href="/showTasks.html">Tasks are pending </a>
+                                    </li>
+                                    <li>
+                                        <p id="leave_requests" class="int_value">0</p>
+                                        <a href="/assign_leave"> New Leave Requests </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="chart" id="arrival-chart" style="min-width: 600px;"></div>
+                    
+                    
+                </div>
+            </div>
+            
+            
+            
+            <div class="chart" id="plotly-graph" style="min-height: 400px;"></div>   <!-- Attendance Chart -->
+            <div class="chart" id="education-chart" ></div>
+        </div>
+
+        <script>
+            // Insert the Plotly graph using JavaScript
+            var graph_data = {{ graph_data| safe }};
+            Plotly.newPlot('plotly-graph', graph_data);
+
+            var education_data = {{ education_data| safe }};
+            Plotly.newPlot('education-chart', education_data);
+
+            var arrival_data = {{ arrival_data| safe }};
+            Plotly.newPlot('arrival-chart', arrival_data);
+
+            // script to change the h4 class text, underscore to space and capitalize first letter
+            var h4 = document.getElementsByClassName('h4');
+            for (var i = 0; i < h4.length; i++) {
+                var text = h4[i].textContent;
+                var text = text.replace(/_/g, ' ');
+                var text = text.charAt(0).toUpperCase() + text.slice(1);
+                h4[i].textContent = text;
+            }
+        </script>
+
+
+        <!-- ajax for notification from the django -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                // Function to fetch data
+                function fetchData() {
+                    $.ajax({
+                        url: '/notification',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            // Handle the retrieved data
+                            console.log(data);
+
+                            // Check if data has changed
+                            if ($('#completed_tasks').text() !== data.completed_tasks.toString()) {
+                                animateChange($('#completed_tasks'), data.completed_tasks);
+                            }
+
+                            if ($('#pending_tasks').text() !== data.pending_tasks.toString()) {
+                                animateChange($('#pending_tasks'), data.pending_tasks);
+                            }
+
+                            if ($('#leave_requests').text() !== data.leave_requests.toString()) {
+                                animateChange($('#leave_requests'), data.leave_requests);
+                            }
+                        },
+                        error: function (error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                }
+
+                // Function to animate changes
+                function animateChange(element, newValue) {
+                    // Add your desired animation here
+                    element.animate({ opacity: 0 }, 500, function () {
+                        element.text(newValue).animate({ opacity: 1 }, 500);
+                    });
+                }
+
+                // Fetch data initially
+                fetchData();
+
+                // Fetch data every 1 minute (60000 milliseconds)
+                setInterval(fetchData, 60000);
+            });
+        </script>
+
+
+
+
+    </div>
+
+</body>
+
+</html>
+{% endblock body %}
