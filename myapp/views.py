@@ -88,6 +88,8 @@ def admin_dashboard(request):
             """)
             arrival_result = cursor.fetchall()
 
+
+
         # Convert results to DataFrames
         education_df = pd.DataFrame(education_result, columns=['Education', 'Count'])
         arrival_df = pd.DataFrame(arrival_result, columns=['ArrivalTime', 'Count'])
@@ -116,6 +118,7 @@ def admin_dashboard(request):
             rows = cursor.fetchall()
             timings = {row[0]: row[1] for row in rows}
 
+        # sunburst
         context = {
             'education_data': education_data,
             'arrival_data': arrival_data,
@@ -159,12 +162,25 @@ def notification(request):
     if leave_requests:
         for employee_id, leave_request in leave_requests.items():
             if isinstance(leave_request, dict):
-                leave_request_count += 1    
+                leave_request_count += 1
 
+
+    # currunt present employees
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT COUNT(*) AS PresentCount
+            FROM EMPLOYEE_ATTENDANCE
+            WHERE Start_Time >= CURDATE()
+        """)
+        result = cursor.fetchone()
+        present_count = result[0]
+    print(present_count)
     context = {
         'completed_tasks': completed_tasks,
         'pending_tasks': pending_tasks,
-        'leave_request_count': leave_request_count
+        'leave_request_count': leave_request_count,
+        'present_count': present_count
     }
     return JsonResponse(context)
 
