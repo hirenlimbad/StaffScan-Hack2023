@@ -36,8 +36,8 @@
                         <td>{{ task.employee_name }}</td>
                         <td>{{ task.task_header }}</td>
                         <td>{{ task.task_description }}</td>
-                        <td>{{ task.status }}</td>
                         <td>{{ task.deadline }}</td>
+                        <td>{{ task.status }}</td>
                         <td>
                             <button class="btn btn-danger dismiss-btn" data-employee-id="{{ task.employee_id }}"
                                 data-deadline="{{ task.deadline }}" data-task-id="{{ task.task_id }}">Dismiss</button>
@@ -56,7 +56,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Your other scripts and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 
     <script>
         // Add a click event listener to the dismiss buttons

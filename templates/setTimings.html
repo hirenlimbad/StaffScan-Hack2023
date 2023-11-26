@@ -42,7 +42,7 @@
         <h2>Current Timings:</h2>
         <ul>
             {% for position, timing in timings.items %}
-            <li class="h4">{{ position }}: {{ timing }}</li>
+            <li class="h4" id="timings">{{ position }}: {{ timing }}</li>
             {% endfor %}
         </ul>
 
@@ -54,6 +54,19 @@
             punch in. After 10:00 AM, it will be considered late, so set timings accordingly.</p>
 
     </div>
+
+    <script>
+
+        var h4 = document.getElementsByClassName('h4');
+        for (var i = 0; i < h4.length; i++) {
+            var text = h4[i].textContent;
+            var text = text.replace(/_/g, ' ');
+            var text = text.charAt(0).toUpperCase() + text.slice(1);
+            h4[i].textContent = text;
+        }
+
+
+    </script>
 
 </body>
 

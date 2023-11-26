@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Capture and Upload</title>
+</head>
+<body>
+    <form id="imageForm" enctype="multipart/form-data">
+        <button type="button" onclick="captureAndUpload()">Capture and Upload Image</button>
+    </form>
+
+    <script>
+        async function captureAndUpload() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                document.body.appendChild(video);
+
+                video.srcObject = stream;
+                await video.play();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+
+                // Capture an image from the video stream
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                stream.getTracks().forEach(track => track.stop());
+                video.remove();
+
+                // Convert the image to a Blob
+                canvas.toBlob((blob) => {
+                    const formData = new FormData();
+                    formData.append('image', blob, 'captured_image.png');
+
+                    // Upload the image to Django
+                    fetch('/upload/', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Response from Django:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }, 'image/png');
+            } catch (error) {
+                console.error('Error capturing image:', error);
+            }
+        }
+    </script>
+</body>
+</html>

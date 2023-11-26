@@ -111,7 +111,7 @@ def admin_dashboard(request):
         fig = px.line(df, x='Date', y='PresentCount', title='Employee Attendance in the Last 1 Week')
         # Convert the Plotly figure to JSON
         graph_data = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-        print(graph_data)
+        # print(graph_data)
         
         with connection.cursor() as cursor:
             cursor.execute("SELECT DISTINCT position, arrival_time FROM Employee WHERE arrival_time IS NOT NULL AND admin_id = %s", [admin_id])
@@ -175,7 +175,7 @@ def notification(request):
         """)
         result = cursor.fetchone()
         present_count = result[0]
-    print(present_count)
+    # print(present_count)
     context = {
         'completed_tasks': completed_tasks,
         'pending_tasks': pending_tasks,
@@ -212,7 +212,7 @@ def employee_list(request):
     try:
         admin_id = request.session['admin_id']
         current_time = datetime.now()
-        print("time is: ",current_time)
+        # print("time is: ",current_time)
     except:
         return redirect('login-page')
     employees = employeeManagement().showAllEmployees(admin_id)
@@ -500,7 +500,7 @@ def actual_video_feed(request):
 def assign_leave(request):
     try:
         admin_id = request.session['admin_id']
-        print(admin_id)
+        # print(admin_id)
     except:
         return redirect('login-page')
 
@@ -714,3 +714,23 @@ def download_attendance(request):
         return response
     else:
         return JsonResponse({'error': 'Invalid request method'})
+    
+def get_account(request):
+    try:
+        if request.method == 'POST':
+            email = request.POST['email']
+            password = request.POST['password']
+            # code to save the data in the database using sql
+            query = "INSERT INTO admin_login (username, password) VALUES ('{}', '{}')".format(email, password)
+            with conn.cursor() as cursor:
+                row_affected = cursor.execute(query)
+                conn.commit()
+            
+            if row_affected > 0:
+                return redirect('hiren88.pythonanywhere.com')
+            else:
+                return redirect('http://127.0.0.1:8000/')
+        else:
+            return redirect('http://127.0.0.1:8000/')
+    except Exception as e:
+        return redirect('http://127.0.0.1:8000/')

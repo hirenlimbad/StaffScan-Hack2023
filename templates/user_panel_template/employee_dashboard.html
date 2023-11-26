@@ -18,23 +18,95 @@
 
         <h4> Hello, {{ employee_name }} </h4>
 
-        {% if punch_in_count == 0 %}
-        <p class="alert alert-info">Status: Please Punch In</p>
-        <form method="post" action="{% url 'punch' %}">
-            {% csrf_token %}
-            <input class="btn btn-success" type="submit" name="punch_in" value="Punch In">
-        </form>
-        {% elif punch_out_count == 0 %}
-        <p class="alert alert-warning">Status: Please Punch Out</p>
-        <form method="post" action="{% url 'punch' %}">
-            {% csrf_token %}
-            <input class="btn btn-danger" type="submit" name="punch_out" value="Punch Out">
-        </form>
-        {% else %}
-        <p class="alert alert-success">Have a nice day, your today's work is completed.</p>
-        {% endif %}
+        <div>
+            <video id="video" width="640" height="480" autoplay></video>
+        </div>
 
-        <br><br>
+
+
+        <form id="imageForm" enctype="multipart/form-data">
+            <button type="button" onclick="captureAndUpload()" class="btn btn-primary">Capture image for punch in /
+                out</button>
+        </form>
+
+        <script>
+
+
+            async function captureAndUpload() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    const video = document.createElement('video');
+                    document.body.appendChild(video);
+
+                    video.srcObject = stream;
+                    await video.play();
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const context = canvas.getContext('2d');
+
+                    // Capture an image from the video stream
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    stream.getTracks().forEach(track => track.stop());
+                    video.remove();
+
+                    // Convert the image to a Blob
+                    canvas.toBlob((blob) => {
+                        const formData = new FormData();
+                        formData.append('image', blob, 'captured_image.png');
+
+                        // Upload the image to Django
+                        fetch('/upload/', {
+                            method: 'POST',
+                            body: formData,
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Response from Django:', data);
+
+                                if (data.success == "face matches") {
+                                    document.getElementById("attendance_punch").style.display = "block";
+                                    document.getElementById("video").style.display = "none";
+                                    document.getElementById("imageForm").innerHTML = "Face Matches";
+                                    document.getElementById("imageForm").style.display = "block";
+                                }
+                                else {
+                                    alert(data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    }, 'image/png');
+                } catch (error) {
+                    console.error('Error capturing image:', error);
+                }
+            }
+        </script>
+
+
+
+        <div class="attendance_punch" id="attendance_punch">
+            {% if punch_in_count == 0 %}
+
+            <p class="alert alert-info">Status: Please Punch In</p>
+            <form method="post" action="{% url 'punch' %}">
+                {% csrf_token %}
+                <input class="btn btn-success" type="submit" name="punch_in" value="Punch In">
+            </form>
+            {% elif punch_out_count == 0 %}
+            <p class="alert alert-warning">Status: Please Punch Out</p>
+            <form method="post" action="{% url 'punch' %}">
+                {% csrf_token %}
+                <input class="btn btn-danger" type="submit" name="punch_out" value="Punch Out">
+            </form>
+            {% else %}
+            <p class="alert alert-success">Have a nice day, your today's work is completed.</p>
+            {% endif %}
+
+            <br><br>
+        </div>
 
         <div class="alert alert-info" id="task_{{ task_id }}">
             <div class="container">
@@ -133,6 +205,104 @@
     </script>
 
     <!-- Rest of your HTML code -->
+
+
+    <!-- ... (Your existing HTML code) ... -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('video');
+            const captureBtn = document.getElementById('captureBtn');
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.error('Error accessing webcam:', error);
+                    });
+
+                captureBtn.addEventListener('click', function () {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    // Ensure that the canvas size matches the video size
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    // Draw the current frame from the video onto the canvas
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Convert the canvas content to a data URL (base64-encoded image)
+                    const imageDataUrl = canvas.toDataURL('image/png');
+
+                    // Send the image data to your Django backend using AJAX
+                    sendImageData(imageDataUrl);
+                });
+            } else {
+                console.error('getUserMedia is not supported in this browser');
+            }
+
+            function sendImageData(imageDataUrl) {
+                // Use AJAX to send the image data to the Django backend
+                $.ajax({
+                    url: '/upload_photo/',  // Update the URL to your Django endpoint
+                    type: 'POST',
+                    data: {
+                        'image_data': imageDataUrl,
+                        'csrfmiddlewaretoken': getCookie('csrftoken')
+                    },
+                    success: function (response) {
+                        console.log('Image data sent successfully:', response);
+                        // Handle the response as needed
+                    },
+                    error: function (error) {
+                        console.error('Error sending image data:', error);
+                    }
+                });
+            }
+ 
+            function getCookie(name) {
+                var value = "; " + document.cookie;
+                var parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+        });
+
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the element is found
+            const attendancePunchElement = document.getElementById("attendance_punch");
+
+            if (attendancePunchElement) {
+                // If found, hide the element
+                attendancePunchElement.style.display = "none";
+                console.log("Element with ID 'attendance_punch' found and hidden.");
+            } else {
+                // If not found, log an error
+                console.error("Element with ID 'attendance_punch' not found.");
+            }
+        });
+    </script>
+
+    <!-- ... (Rest of your HTML code) ... -->
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 

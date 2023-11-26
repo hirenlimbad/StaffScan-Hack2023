@@ -22,13 +22,22 @@
         }
 
         .navbar {
-            background-color: white;
+            background-color: #8badec !important;
             border-color: transparent !important;
+            margin: 10px 20px;
+            padding: 0px 15px;
+            border-radius: 15px;
+
+            /* font shadow */
+            -webkit-box-shadow: 0px 0px 15px 0px rgb(192, 157, 157);
+            -moz-box-shadow: 0px 0px 15px 0px rgb(208, 189, 189);
+            box-shadow: 0px 0px 15px 0px rgb(179, 157, 157);
         }
 
         .navbar li:hover {
-            background-color: #c8cad5;
+            background-color: white;
             color: white !important;
+
         }
 
         .navbar li a:hover {
@@ -68,9 +77,6 @@
             border-radius: 4px !important;
         }
 
-        /* resposive ui code */
-
-        /* used media tag for change the table border */
 
         @media screen and (max-width: 600px) {
             table {
@@ -101,19 +107,18 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <a class="navbar-brand" href="admin_dashboard">
-                        <!-- <img src="https://i.ibb.co/Qj9sH1J/Staff-Scan-Logo.jpg" alt="Company Logo" style="max-height: 100%;"> -->
+                    <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
                         StaffScan
                     </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li id="showEmployee"><a href="/showEmployee.html">Employee List</a></li>
-                        <li id="addEmployee"><a href="/addEmployee.html">Add Employee</a></li>
-                        <li id="showTasks"><a href="/showTasks.html">Show assigned Tasks</a></li>
-                        <li id="assignLeave"><a href="/assign_leave">Leave Requests</a></li>
-                        <li id="lateEmployee"><a href="/late_employee">Show Late Employees</a></li>
-                        <li id="Timings"><a href="/set_timings.html">Set Timings</a></li>
+                        <li id="showEmployee"><a href="{% url 'show_emoloyee' %}">Employee List</a></li>
+                        <li id="addEmployee"><a href="{% url 'add emoloyee' %}">Add Employee</a></li>
+                        <li id="showTasks"><a href="{% url 'assigned_task_view' %}">Show assigned Tasks</a></li>
+                        <li id="assignLeave"><a href="{% url 'assign_leave' %}">Leave Requests</a></li>
+                        <li id="lateEmployee"><a href="{% url 'late_employee' %}">Show Late Employees</a></li>
+                        <li id="Timings"><a href="{% url 'SetTimings' %}">Set Timings</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="../">Logout</a></li>

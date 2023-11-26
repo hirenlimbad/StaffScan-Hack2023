@@ -27,6 +27,11 @@ import csv
 from django.db import connection as conn
 from datetime import timedelta, datetime, date
 import base64
+import face_recognition
+from PIL import Image
+import io
+import cv2
+import numpy as np
 
 # Initialize Firebase credentials (you've already provided this)
 cred = credentials.Certificate("hackathon2023-4c407-firebase-adminsdk-xqeff-f482eeb1f8.json")
@@ -134,6 +139,80 @@ def punch(request):
                     connection.commit()
 
     return redirect('employee_dashboard')
+
+@csrf_exempt
+def upload_photo(request):
+    if request.method == 'POST':
+        try:
+            image_data = request.POST.get('image_data')
+            
+
+        except Exception as e:
+            print(e)
+
+    return HttpResponse('Invalid request method or no image data provided.')
+
+
+def image_will_upload(request):
+    return render(request, 'user_panel_template/image_will_upload.html')
+
+@csrf_exempt
+def upload_image(request):
+    try:
+        if request.method == 'POST' and request.FILES.get('image'):
+            image_file = request.FILES['image']
+            image = Image.open(image_file)
+            image = np.array(image)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+            # Get the employee ID from the session
+            employee_id = request.session.get('employee_id')
+            # get the face image from the database
+            cursor = conn.cursor()
+            query = "SELECT faceImage FROM Employee WHERE EmployeeID = %s"
+            cursor.execute(query, (employee_id,))
+            employee = cursor.fetchone()
+
+            # Get the face encodings for the current employee
+            if employee and employee[0]:
+                employee_image = employee[0]
+                employee_image = np.array(Image.open(io.BytesIO(employee_image)))
+                employee_image = cv2.cvtColor(employee_image, cv2.COLOR_BGR2RGB)
+                
+
+                employee_face_encodings = face_recognition.face_encodings(employee_image)
+                if len(employee_face_encodings) > 0:
+                    employee_face_encoding = employee_face_encodings[0]
+
+                    # Get the face encodings for the current uploaded image
+                    unknown_face_encodings = face_recognition.face_encodings(image)
+                    if len(unknown_face_encodings) > 0:
+                        # Check if there are multiple faces in the uploaded image
+                        if len(unknown_face_encodings) > 1:
+                            return JsonResponse({'message': 'Multiple faces detected in the uploaded image'})
+                        
+                        unknown_face_encoding = unknown_face_encodings[0]
+                        
+                        # Compare the faces and get the distance
+                        face_distance = face_recognition.face_distance([employee_face_encoding], unknown_face_encoding)
+                        if face_distance < 0.5:
+                            return JsonResponse({'message': 'Face matches', 'success': 'face matches'})
+                        else:
+                            return JsonResponse({'message': 'Face does not match'})
+                    else:
+                        return JsonResponse({'message': 'No face found in the uploaded image'})
+                else:
+                    return JsonResponse({'message': 'No face found in the employee image'})
+            else:
+                return JsonResponse({'message': 'No face found in the employee image'})
+
+        return JsonResponse({'message': 'Image uploaded successfully'})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'message': 'Error uploading image'})
+
+    return JsonResponse({'error': 'Invalid request'})
+
 
 
 def employee_dashboard(request):

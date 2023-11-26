@@ -13,7 +13,7 @@ urlpatterns = [
     path('index.html', views.index, name='index'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('addEmployee.html', views.add_employee, name= "add emoloyee"),
-    path('showEmployee.html', views.employee_list, name= "show emoloyee"),
+    path('showEmployee.html', views.employee_list, name= "show_emoloyee"),
     path('get-latest-employee-data/', views.get_latest_employee_data, name='get_latest_employee_data'),
     path('deleteEmployee.html', views.delete_employee, name= "Delete Employee"),
     path('editEmployee.html', views.edit_employee, name="Edit Employee"),
@@ -50,7 +50,12 @@ urlpatterns = [
     path('download_attendance', user_view.download_attendance, name='download_attendance'),
     path('mark_task_completed/<int:employee_id>/<int:task_id>/', user_view.mark_task_completed, name='mark_task_completed'),
     path('mark_task_completed/<str:employee_id>/<str:task_id>/', user_view.mark_task_completed, name='strmark_task_completed'),
-    path('show_details', user_view.show_details, name="emp_details")
+    path('show_details', user_view.show_details, name="emp_details"),
+    path('upload_photo/', user_view.upload_photo, name='upload_photo'),
+    path('image_will_upload', user_view.image_will_upload, name='image_will_upload'),
+    path('upload/', user_view.upload_image, name='upload_image'),
+
+
 
 ]
 
