@@ -1,6 +1,8 @@
 # StaffScan End-to-End Project for SSIP Hackathon 2023
-
+![staffscan logo](demo_photos/Dashboard.png)
 staffscan is an employee management and attendance tracking web application built with Django. It was created as an end-to-end project for the SSIP Hackathon 2023.
+
+staffscan was selected amongst the top 181 finalists to present at the hackathon grand finale. Although we did not end up as the winner, being selected for the finale demonstrates staffscan's quality and innovation. Feedback from judges was very positive, praising in particular staffscan's polished user interface and extensive functionality considering the short 24 hour hackathon duration.
 
 ## Features
 
@@ -54,6 +56,8 @@ The application will now be running at **127.0.0.1:8000**
 * Downloadable attendance data in CSV format
 
 ## Architecture
+
+![Flow Chart](demo_photos/flow_chart.jpg)
 
 - Django framework managing overall application and Firebase API
 - MySQL database
