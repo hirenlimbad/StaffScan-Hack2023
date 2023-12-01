@@ -82,3 +82,5 @@ password : limbadhiren00@gmail.com
 Contributions to staffscan are welcome! We greatly appreciate any contributions to make staffscan better.
 
 We encourage you to pitch in and contribute to the project! Every bit helps and even small fixes/additions are valuable.
+
+## Thank You
