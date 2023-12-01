@@ -79,4 +79,6 @@ password : limbadhiren00@gmail.com
 		
 
 ## Contributing
-Contributions are welcome! Please open an issue or pull request on GitHub.
+Contributions to staffscan are welcome! We greatly appreciate any contributions to make staffscan better.
+
+We encourage you to pitch in and contribute to the project! Every bit helps and even small fixes/additions are valuable.
