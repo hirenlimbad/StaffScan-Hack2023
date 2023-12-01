@@ -49,7 +49,7 @@ The application will now be running at **127.0.0.1:8000**
 
 ## Usage
 
-* Employees can log time in/out with face recognition
+* Employees can punch in punch out with face recognition.
 * Admins have access to dashboards for attendance, leave, tasks etc. 
 * Tasks can be assigned to individuals or groups
 * Leave requests visible to admins
